@@ -1,0 +1,904 @@
+{
+  "project": "Cron Jobs Management System - Backend",
+  "version": "1.0",
+  "tech_stack": {
+    "framework": "NestJS 10+",
+    "language": "TypeScript 5+",
+    "database": "MySQL 8+",
+    "orm": "TypeORM",
+    "scheduler": "node-cron",
+    "authentication": "JWT",
+    "testing": "Jest & Supertest"
+  },
+  "phases": [
+    {
+      "phase_id": "B1",
+      "phase_name": "Project Setup & Base Configuration",
+      "duration": "1 day",
+      "scope": {
+        "description": "Initialize NestJS project with TypeScript and configure development environment",
+        "deliverables": [
+          "NestJS project initialization",
+          "TypeScript strict configuration",
+          "ESLint and Prettier setup",
+          "Environment configuration module",
+          "Base project structure"
+        ]
+      },
+      "goals": [
+        "Establish consistent development environment",
+        "Configure TypeScript with strict settings",
+        "Setup code quality tools"
+      ],
+      "dependencies": {
+        "external": ["Node.js 18+", "MySQL 8+"],
+        "internal": []
+      },
+      "test_strategy": {
+        "unit_tests": "Verify configuration loading",
+        "integration_tests": "Test environment validation",
+        "manual_tests": [
+          "Verify development server runs",
+          "Validate linting rules"
+        ]
+      }
+    },
+    {
+      "phase_id": "B2",
+      "phase_name": "Database Setup & Base Entities",
+      "duration": "2 days",
+      "scope": {
+        "description": "Configure TypeORM and create base entity structure",
+        "deliverables": [
+          "TypeORM configuration",
+          "Database connection module",
+          "BaseEntity abstract class",
+          "Migration setup and commands",
+          "Database seeder structure",
+          "Connection pooling configuration"
+        ]
+      },
+      "goals": [
+        "Establish database connectivity",
+        "Create reusable base entities",
+        "Setup migration workflow"
+      ],
+      "dependencies": {
+        "external": ["MySQL database"],
+        "internal": ["B1"]
+      },
+      "test_strategy": {
+        "unit_tests": "Test database configuration",
+        "integration_tests": "Test database connection",
+        "manual_tests": [
+          "Verify migration commands work",
+          "Test connection pooling",
+          "Validate TypeORM queries"
+        ]
+      }
+    },
+    {
+      "phase_id": "B3",
+      "phase_name": "Common Module & Shared Components",
+      "duration": "2 days",
+      "scope": {
+        "description": "Create shared utilities, decorators, and common components",
+        "deliverables": [
+          "Response interceptor",
+          "HTTP exception filter",
+          "Validation pipes",
+          "Common DTOs (Pagination, ApiResponse)",
+          "Custom decorators",
+          "Utility functions"
+        ]
+      },
+      "goals": [
+        "Standardize API responses",
+        "Implement global error handling",
+        "Create reusable components"
+      ],
+      "dependencies": {
+        "external": [],
+        "internal": ["B1"]
+      },
+      "test_strategy": {
+        "unit_tests": "Test interceptors, filters, pipes",
+        "integration_tests": "Test with actual HTTP requests",
+        "manual_tests": [
+          "Verify error response format",
+          "Test validation messages",
+          "Check response consistency"
+        ]
+      }
+    },
+    {
+      "phase_id": "B4",
+      "phase_name": "User Entity & Module",
+      "duration": "1 day",
+      "scope": {
+        "description": "Create user entity and basic user module",
+        "deliverables": [
+          "User entity with migrations",
+          "User module structure",
+          "User service (basic CRUD)",
+          "User DTOs",
+          "Password hashing utility"
+        ]
+      },
+      "goals": [
+        "Establish user data model",
+        "Implement secure password storage",
+        "Create user management foundation"
+      ],
+      "dependencies": {
+        "external": [],
+        "internal": ["B2", "B3"]
+      },
+      "test_strategy": {
+        "unit_tests": "Test user service methods",
+        "integration_tests": "Test user creation and retrieval",
+        "manual_tests": ["Verify password hashing", "Test user CRUD operations"]
+      }
+    },
+    {
+      "phase_id": "B5",
+      "phase_name": "JWT Authentication Module",
+      "duration": "2 days",
+      "scope": {
+        "description": "Implement JWT-based authentication system",
+        "deliverables": [
+          "JWT strategy implementation",
+          "Auth module and service",
+          "Login/logout endpoints",
+          "JWT guard",
+          "Refresh token mechanism",
+          "Session management"
+        ]
+      },
+      "goals": [
+        "Secure authentication system",
+        "Token-based authorization",
+        "Session persistence support"
+      ],
+      "dependencies": {
+        "external": ["jsonwebtoken package"],
+        "internal": ["B4"]
+      },
+      "test_strategy": {
+        "unit_tests": "Test JWT generation and validation",
+        "integration_tests": "Test complete auth flow",
+        "manual_tests": [
+          "Test login with valid/invalid credentials",
+          "Verify token expiration",
+          "Test refresh token flow"
+        ]
+      }
+    },
+    {
+      "phase_id": "B6",
+      "phase_name": "Category Entity & Basic CRUD",
+      "duration": "2 days",
+      "scope": {
+        "description": "Create category module with entity and basic operations",
+        "deliverables": [
+          "Category entity and migration",
+          "Category module structure",
+          "Category service (CRUD)",
+          "Category controller",
+          "Category DTOs with validation",
+          "Job count tracking"
+        ]
+      },
+      "goals": [
+        "Complete category data model",
+        "Basic CRUD operations",
+        "Data validation implementation"
+      ],
+      "dependencies": {
+        "external": [],
+        "internal": ["B2", "B3", "B5"]
+      },
+      "test_strategy": {
+        "unit_tests": "Test category service methods",
+        "integration_tests": "Test CRUD endpoints",
+        "manual_tests": [
+          "Test category creation",
+          "Verify unique constraints",
+          "Test validation rules"
+        ]
+      }
+    },
+    {
+      "phase_id": "B7",
+      "phase_name": "Category Advanced Features",
+      "duration": "2 days",
+      "scope": {
+        "description": "Implement search, filtering, and pagination for categories",
+        "deliverables": [
+          "Server-side search implementation",
+          "Filter by status and color",
+          "Server-side pagination",
+          "Category statistics",
+          "Search debouncing support",
+          "Query optimization"
+        ]
+      },
+      "goals": [
+        "Efficient data querying",
+        "Performance optimization",
+        "Advanced filtering capabilities"
+      ],
+      "dependencies": {
+        "external": [],
+        "internal": ["B6"]
+      },
+      "test_strategy": {
+        "unit_tests": "Test query builders",
+        "integration_tests": "Test search and filter combinations",
+        "manual_tests": [
+          "Test with large datasets",
+          "Verify pagination accuracy",
+          "Test search performance"
+        ]
+      }
+    },
+    {
+      "phase_id": "B8",
+      "phase_name": "Job Entity & Basic Structure",
+      "duration": "2 days",
+      "scope": {
+        "description": "Create job entity with relationships and basic module",
+        "deliverables": [
+          "Job entity with all fields",
+          "Job-Category relationship",
+          "Job module structure",
+          "Complex migration for jobs table",
+          "Job status enum",
+          "HTTP method enum"
+        ]
+      },
+      "goals": [
+        "Complete job data model",
+        "Establish relationships",
+        "Support all job configurations"
+      ],
+      "dependencies": {
+        "external": [],
+        "internal": ["B6"]
+      },
+      "test_strategy": {
+        "unit_tests": "Test entity relationships",
+        "integration_tests": "Test job creation with category",
+        "manual_tests": [
+          "Verify foreign key constraints",
+          "Test JSON field storage",
+          "Validate cron patterns"
+        ]
+      }
+    },
+    {
+      "phase_id": "B9",
+      "phase_name": "Job CRUD Operations",
+      "duration": "3 days",
+      "scope": {
+        "description": "Implement comprehensive job management operations",
+        "deliverables": [
+          "Job service with CRUD",
+          "Job controller endpoints",
+          "Create/Update job DTOs",
+          "Cron pattern validation",
+          "URL validation",
+          "Request body/headers handling"
+        ]
+      },
+      "goals": [
+        "Complete job management",
+        "Robust validation",
+        "Support complex configurations"
+      ],
+      "dependencies": {
+        "external": ["node-cron for validation"],
+        "internal": ["B8"]
+      },
+      "test_strategy": {
+        "unit_tests": "Test validation logic, CRUD operations",
+        "integration_tests": "Test job creation flow",
+        "manual_tests": [
+          "Test invalid cron patterns",
+          "Verify complex job configs",
+          "Test unique name constraint"
+        ]
+      }
+    },
+    {
+      "phase_id": "B10",
+      "phase_name": "Job Advanced Features",
+      "duration": "2 days",
+      "scope": {
+        "description": "Implement job search, filtering, and analytics",
+        "deliverables": [
+          "Job search functionality",
+          "Multi-filter system",
+          "Job pagination",
+          "Job statistics calculation",
+          "Status toggle endpoint",
+          "Lazy loading support for dropdowns"
+        ]
+      },
+      "goals": [
+        "Efficient job browsing",
+        "Complex filtering support",
+        "Performance optimization"
+      ],
+      "dependencies": {
+        "external": [],
+        "internal": ["B9"]
+      },
+      "test_strategy": {
+        "unit_tests": "Test filter combinations",
+        "integration_tests": "Test pagination with filters",
+        "manual_tests": [
+          "Test with 1000+ jobs",
+          "Verify lazy loading",
+          "Test filter performance"
+        ]
+      }
+    },
+    {
+      "phase_id": "B11",
+      "phase_name": "Execution History Entity & Module",
+      "duration": "2 days",
+      "scope": {
+        "description": "Create execution history tracking system",
+        "deliverables": [
+          "ExecutionHistory entity",
+          "History module structure",
+          "History service",
+          "Execution status enum",
+          "History-Job relationship",
+          "Response storage handling"
+        ]
+      },
+      "goals": [
+        "Complete execution tracking",
+        "Efficient data storage",
+        "Support large responses"
+      ],
+      "dependencies": {
+        "external": [],
+        "internal": ["B8"]
+      },
+      "test_strategy": {
+        "unit_tests": "Test history creation",
+        "integration_tests": "Test history recording",
+        "manual_tests": [
+          "Test large response storage",
+          "Verify relationship integrity",
+          "Test status tracking"
+        ]
+      }
+    },
+    {
+      "phase_id": "B12",
+      "phase_name": "Scheduler Service Core",
+      "duration": "3 days",
+      "scope": {
+        "description": "Implement core job scheduling functionality",
+        "deliverables": [
+          "Scheduler module",
+          "Scheduler service with node-cron",
+          "Job loading on startup",
+          "Schedule management (start/stop)",
+          "Cron validation service",
+          "In-memory job tracking"
+        ]
+      },
+      "goals": [
+        "Reliable job scheduling",
+        "Dynamic schedule management",
+        "System restart resilience"
+      ],
+      "dependencies": {
+        "external": ["node-cron"],
+        "internal": ["B9"]
+      },
+      "test_strategy": {
+        "unit_tests": "Test schedule creation/removal",
+        "integration_tests": "Test job loading on startup",
+        "manual_tests": [
+          "Verify cron execution timing",
+          "Test schedule updates",
+          "Test system restart"
+        ]
+      }
+    },
+    {
+      "phase_id": "B13",
+      "phase_name": "Job Executor Service",
+      "duration": "3 days",
+      "scope": {
+        "description": "Implement job execution engine with HTTP calls",
+        "deliverables": [
+          "Job executor service",
+          "HTTP request execution",
+          "Retry mechanism",
+          "Timeout handling",
+          "Error handling and logging",
+          "Execution history recording"
+        ]
+      },
+      "goals": [
+        "Reliable HTTP execution",
+        "Comprehensive error handling",
+        "Accurate history tracking"
+      ],
+      "dependencies": {
+        "external": ["axios"],
+        "internal": ["B11", "B12"]
+      },
+      "test_strategy": {
+        "unit_tests": "Test retry logic, timeout handling",
+        "integration_tests": "Test with mock HTTP endpoints",
+        "manual_tests": [
+          "Test various HTTP methods",
+          "Test timeout scenarios",
+          "Test retry mechanism"
+        ]
+      }
+    },
+    {
+      "phase_id": "B14",
+      "phase_name": "Manual Job Trigger",
+      "duration": "1 day",
+      "scope": {
+        "description": "Implement manual job execution endpoint",
+        "deliverables": [
+          "Manual trigger endpoint",
+          "Immediate execution logic",
+          "Response handling",
+          "Execution tracking",
+          "Authorization checks"
+        ]
+      },
+      "goals": [
+        "On-demand job execution",
+        "Testing capability",
+        "Same execution flow as scheduled"
+      ],
+      "dependencies": {
+        "external": [],
+        "internal": ["B13"]
+      },
+      "test_strategy": {
+        "unit_tests": "Test trigger logic",
+        "integration_tests": "Test manual execution flow",
+        "manual_tests": [
+          "Test immediate execution",
+          "Verify history recording",
+          "Test concurrent triggers"
+        ]
+      }
+    },
+    {
+      "phase_id": "B15",
+      "phase_name": "History Search & Filtering",
+      "duration": "2 days",
+      "scope": {
+        "description": "Implement history browsing with advanced filters",
+        "deliverables": [
+          "History controller endpoints",
+          "Search by job name",
+          "Filter by job, category, status",
+          "Date range filtering",
+          "History pagination",
+          "Query optimization for large datasets"
+        ]
+      },
+      "goals": [
+        "Efficient history browsing",
+        "Complex filtering support",
+        "Performance with millions of records"
+      ],
+      "dependencies": {
+        "external": [],
+        "internal": ["B11"]
+      },
+      "test_strategy": {
+        "unit_tests": "Test date range logic",
+        "integration_tests": "Test filter combinations",
+        "manual_tests": [
+          "Test with large history",
+          "Verify date filtering",
+          "Test query performance"
+        ]
+      }
+    },
+    {
+      "phase_id": "B16",
+      "phase_name": "Dashboard Analytics Module",
+      "duration": "2 days",
+      "scope": {
+        "description": "Create dashboard with aggregated statistics",
+        "deliverables": [
+          "Dashboard module",
+          "Category statistics endpoint",
+          "Job overview endpoint",
+          "Success/failure metrics",
+          "Recent activity endpoint",
+          "Aggregation queries"
+        ]
+      },
+      "goals": [
+        "Real-time statistics",
+        "Efficient aggregation",
+        "Comprehensive overview"
+      ],
+      "dependencies": {
+        "external": [],
+        "internal": ["B7", "B10", "B15"]
+      },
+      "test_strategy": {
+        "unit_tests": "Test aggregation logic",
+        "integration_tests": "Test statistics accuracy",
+        "manual_tests": [
+          "Verify calculation accuracy",
+          "Test with large datasets",
+          "Check query performance"
+        ]
+      }
+    },
+    {
+      "phase_id": "B17",
+      "phase_name": "Caching Layer Implementation",
+      "duration": "2 days",
+      "scope": {
+        "description": "Add caching for improved performance",
+        "deliverables": [
+          "Cache module setup",
+          "Category caching",
+          "Dashboard caching",
+          "Cache invalidation logic",
+          "TTL configuration",
+          "Cache warming strategies"
+        ]
+      },
+      "goals": [
+        "Reduce database load",
+        "Improve response times",
+        "Smart cache invalidation"
+      ],
+      "dependencies": {
+        "external": ["Redis (optional)"],
+        "internal": ["B16"]
+      },
+      "test_strategy": {
+        "unit_tests": "Test cache operations",
+        "integration_tests": "Test invalidation logic",
+        "manual_tests": [
+          "Verify cache hit rates",
+          "Test invalidation triggers",
+          "Measure performance gains"
+        ]
+      }
+    },
+    {
+      "phase_id": "B18",
+      "phase_name": "Security Hardening",
+      "duration": "2 days",
+      "scope": {
+        "description": "Implement security measures and rate limiting",
+        "deliverables": [
+          "Rate limiting setup",
+          "Helmet security headers",
+          "CORS configuration",
+          "Input sanitization",
+          "SQL injection prevention audit",
+          "API key support (optional)"
+        ]
+      },
+      "goals": [
+        "Secure API endpoints",
+        "Prevent abuse",
+        "Production-ready security"
+      ],
+      "dependencies": {
+        "external": ["helmet", "express-rate-limit"],
+        "internal": ["B1-B17"]
+      },
+      "test_strategy": {
+        "unit_tests": "Test rate limit logic",
+        "integration_tests": "Security vulnerability scan",
+        "manual_tests": [
+          "Test rate limiting",
+          "Verify CORS settings",
+          "SQL injection tests"
+        ]
+      }
+    },
+    {
+      "phase_id": "B19",
+      "phase_name": "Logging & Monitoring Setup",
+      "duration": "2 days",
+      "scope": {
+        "description": "Implement comprehensive logging and health checks",
+        "deliverables": [
+          "Winston logger integration",
+          "Structured logging",
+          "Health check endpoints",
+          "Readiness/liveness probes",
+          "Error tracking setup",
+          "Performance monitoring"
+        ]
+      },
+      "goals": [
+        "Production-ready logging",
+        "System observability",
+        "Health monitoring"
+      ],
+      "dependencies": {
+        "external": ["winston"],
+        "internal": ["B1-B18"]
+      },
+      "test_strategy": {
+        "unit_tests": "Test logger functionality",
+        "integration_tests": "Test health endpoints",
+        "manual_tests": [
+          "Verify log output",
+          "Test health checks",
+          "Check log rotation"
+        ]
+      }
+    },
+    {
+      "phase_id": "B20",
+      "phase_name": "API Documentation",
+      "duration": "1 day",
+      "scope": {
+        "description": "Complete Swagger/OpenAPI documentation",
+        "deliverables": [
+          "Swagger configuration",
+          "Endpoint documentation",
+          "DTO schema documentation",
+          "Example requests/responses",
+          "Authentication documentation",
+          "API versioning setup"
+        ]
+      },
+      "goals": [
+        "Complete API documentation",
+        "Interactive API testing",
+        "Developer-friendly docs"
+      ],
+      "dependencies": {
+        "external": ["@nestjs/swagger"],
+        "internal": ["B1-B19"]
+      },
+      "test_strategy": {
+        "unit_tests": "N/A",
+        "integration_tests": "Verify swagger generation",
+        "manual_tests": [
+          "Test all endpoints in Swagger UI",
+          "Verify example accuracy",
+          "Check auth flow in docs"
+        ]
+      }
+    },
+    {
+      "phase_id": "B21",
+      "phase_name": "Database Optimization",
+      "duration": "2 days",
+      "scope": {
+        "description": "Optimize database performance and add indexes",
+        "deliverables": [
+          "Database indexes creation",
+          "Query optimization",
+          "Connection pool tuning",
+          "Slow query identification",
+          "Database maintenance jobs",
+          "Archival strategy for old data"
+        ]
+      },
+      "goals": [
+        "Optimal query performance",
+        "Efficient data retrieval",
+        "Scalability preparation"
+      ],
+      "dependencies": {
+        "external": [],
+        "internal": ["B1-B20"]
+      },
+      "test_strategy": {
+        "unit_tests": "N/A",
+        "integration_tests": "Performance benchmarks",
+        "manual_tests": [
+          "Test query performance",
+          "Verify index usage",
+          "Load testing"
+        ]
+      }
+    },
+    {
+      "phase_id": "B22",
+      "phase_name": "Testing Suite Completion",
+      "duration": "3 days",
+      "scope": {
+        "description": "Complete test coverage and E2E testing",
+        "deliverables": [
+          "Unit test completion (>80% coverage)",
+          "Integration test suite",
+          "E2E test scenarios",
+          "Test data factories",
+          "CI/CD test configuration",
+          "Performance test suite"
+        ]
+      },
+      "goals": [
+        "Comprehensive test coverage",
+        "Automated testing",
+        "Regression prevention"
+      ],
+      "dependencies": {
+        "external": ["supertest"],
+        "internal": ["B1-B21"]
+      },
+      "test_strategy": {
+        "unit_tests": "Complete coverage",
+        "integration_tests": "Full API testing",
+        "manual_tests": [
+          "Run full test suite",
+          "Verify CI/CD integration",
+          "Performance testing"
+        ]
+      }
+    },
+    {
+      "phase_id": "B23",
+      "phase_name": "Production Deployment Prep",
+      "duration": "2 days",
+      "scope": {
+        "description": "Prepare for production deployment",
+        "deliverables": [
+          "Production Dockerfile",
+          "Docker Compose setup",
+          "Environment configuration",
+          "Database migration scripts",
+          "Deployment documentation",
+          "Rollback procedures"
+        ]
+      },
+      "goals": [
+        "Production-ready deployment",
+        "Automated deployment process",
+        "Zero-downtime deployment"
+      ],
+      "dependencies": {
+        "external": ["Docker"],
+        "internal": ["B1-B22"]
+      },
+      "test_strategy": {
+        "unit_tests": "N/A",
+        "integration_tests": "Deployment scripts testing",
+        "manual_tests": [
+          "Test Docker build",
+          "Verify migration process",
+          "Test rollback procedure"
+        ]
+      }
+    },
+    {
+      "phase_id": "B24",
+      "phase_name": "Final Integration & UAT",
+      "duration": "2 days",
+      "scope": {
+        "description": "Final testing and user acceptance",
+        "deliverables": [
+          "Complete API testing",
+          "Load testing results",
+          "Security audit completion",
+          "Performance benchmarks",
+          "Bug fixes",
+          "API documentation finalization"
+        ]
+      },
+      "goals": [
+        "Production readiness",
+        "All requirements met",
+        "Performance targets achieved"
+      ],
+      "dependencies": {
+        "external": ["Frontend integration"],
+        "internal": ["B1-B23"]
+      },
+      "test_strategy": {
+        "unit_tests": "Final test run",
+        "integration_tests": "Complete E2E testing",
+        "manual_tests": [
+          "Full system testing",
+          "Load testing",
+          "Security penetration testing"
+        ]
+      }
+    }
+  ],
+  "total_duration": "44 days",
+  "critical_path": ["B1 → B2 → B4 → B5 → B6 → B8 → B9 → B12 → B13 → B14 → B24"],
+  "parallel_tracks": [
+    {
+      "track": "Common Components",
+      "phases": ["B3"],
+      "can_start_after": "B1"
+    },
+    {
+      "track": "Category Advanced Features",
+      "phases": ["B7"],
+      "can_start_after": "B6"
+    },
+    {
+      "track": "Job Advanced Features",
+      "phases": ["B10"],
+      "can_start_after": "B9"
+    },
+    {
+      "track": "History Management",
+      "phases": ["B11", "B15"],
+      "can_start_after": "B8"
+    },
+    {
+      "track": "Analytics & Dashboard",
+      "phases": ["B16"],
+      "can_start_after": "B15"
+    },
+    {
+      "track": "Performance & Security",
+      "phases": ["B17", "B18", "B19", "B21"],
+      "can_start_after": "B16"
+    },
+    {
+      "track": "Documentation & Testing",
+      "phases": ["B20", "B22"],
+      "can_start_after": "B19"
+    }
+  ],
+  "risk_mitigation": {
+    "scheduler_reliability": "Implement robust error handling and job recovery",
+    "performance_issues": "Early implementation of caching and query optimization",
+    "security_vulnerabilities": "Regular security audits throughout development",
+    "data_integrity": "Comprehensive transaction management and validation"
+  },
+  "success_metrics": {
+    "technical": [
+      "All API endpoints implemented as per PRD",
+      "Response time < 2 seconds for all endpoints",
+      "Support for 1000+ concurrent jobs",
+      "Zero data loss in job execution",
+      "99.9% uptime for scheduler service"
+    ],
+    "quality": [
+      "Unit test coverage > 80%",
+      "Zero critical security vulnerabilities",
+      "All endpoints documented in Swagger",
+      "Load test passing with 1000 concurrent users",
+      "Database queries optimized with proper indexing"
+    ]
+  },
+  "integration_points": {
+    "frontend": {
+      "phases": ["B5", "B6", "B9", "B14", "B15", "B16"],
+      "requirements": [
+        "Consistent API response format",
+        "Proper CORS configuration",
+        "Real-time updates via polling",
+        "Comprehensive error messages"
+      ]
+    },
+    "external_services": {
+      "phases": ["B13"],
+      "requirements": [
+        "HTTP client configuration",
+        "Timeout handling",
+        "Retry mechanisms",
+        "SSL/TLS support"
+      ]
+    }
+  }
+}

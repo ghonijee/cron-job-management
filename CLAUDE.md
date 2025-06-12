@@ -16,4 +16,11 @@ See @docs/global_requirement.md and @docs/PRD.md for project requirements and do
 
 - @docs/frontend/development-phase.json
 - @docs/frontend/frontend_guideline.md
-- @docs/frontend/tasks/\*.md
+
+# API Contract
+
+- @docs/api_contract/1_auth_api.json
+
+# Backend Project Documentation & Guideline
+
+- @docs/backend/backend_guideline.md

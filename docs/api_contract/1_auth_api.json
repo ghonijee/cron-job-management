@@ -1,0 +1,348 @@
+{
+  "api_contract": {
+    "service": "Authentication Service",
+    "version": "1.0",
+    "base_url": "/api/auth",
+    "description": "Authentication endpoints for Cron Jobs Management System",
+    "authentication": {
+      "type": "Bearer Token",
+      "header": "Authorization: Bearer <token>",
+      "token_expiry": "24 hours",
+      "refresh_strategy": "Manual re-login"
+    }
+  },
+  "endpoints": [
+    {
+      "endpoint": "POST /api/auth/login",
+      "description": "Authenticate user with email and password",
+      "public": true,
+      "request": {
+        "content_type": "application/json",
+        "body": {
+          "email": {
+            "type": "string",
+            "required": true,
+            "format": "email",
+            "example": "admin@company.com"
+          },
+          "password": {
+            "type": "string",
+            "required": true,
+            "min_length": 6,
+            "example": "password123"
+          },
+          "remember_me": {
+            "type": "boolean",
+            "required": false,
+            "default": false,
+            "description": "Extend session duration"
+          }
+        }
+      },
+      "responses": {
+        "200": {
+          "description": "Login successful",
+          "content_type": "application/json",
+          "body": {
+            "success": true,
+            "message": "Login successful",
+            "data": {
+              "user": {
+                "id": "string",
+                "email": "string",
+                "name": "string",
+                "role": "admin",
+                "last_login": "2024-01-15T10:30:00Z",
+                "created_at": "2024-01-01T00:00:00Z"
+              },
+              "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+              "expires_at": "2024-01-16T10:30:00Z",
+              "remember_me": false
+            }
+          }
+        },
+        "400": {
+          "description": "Invalid request data",
+          "content_type": "application/json",
+          "body": {
+            "success": false,
+            "message": "Validation failed",
+            "errors": {
+              "email": ["Email is required", "Invalid email format"],
+              "password": ["Password is required"]
+            }
+          }
+        },
+        "401": {
+          "description": "Invalid credentials",
+          "content_type": "application/json",
+          "body": {
+            "success": false,
+            "message": "Invalid email or password",
+            "data": null
+          }
+        },
+        "429": {
+          "description": "Too many login attempts",
+          "content_type": "application/json",
+          "body": {
+            "success": false,
+            "message": "Too many login attempts. Please try again in 15 minutes",
+            "data": {
+              "retry_after": 900,
+              "attempts_remaining": 0
+            }
+          }
+        },
+        "500": {
+          "description": "Server error",
+          "content_type": "application/json",
+          "body": {
+            "success": false,
+            "message": "Internal server error",
+            "data": null
+          }
+        }
+      }
+    },
+    {
+      "endpoint": "POST /api/auth/logout",
+      "description": "Logout user and invalidate session",
+      "public": false,
+      "authentication_required": true,
+      "request": {
+        "content_type": "application/json",
+        "headers": {
+          "Authorization": "Bearer <token>"
+        },
+        "body": {}
+      },
+      "responses": {
+        "200": {
+          "description": "Logout successful",
+          "content_type": "application/json",
+          "body": {
+            "success": true,
+            "message": "Logout successful",
+            "data": null
+          }
+        },
+        "401": {
+          "description": "Invalid or expired token",
+          "content_type": "application/json",
+          "body": {
+            "success": false,
+            "message": "Invalid or expired token",
+            "data": null
+          }
+        },
+        "500": {
+          "description": "Server error",
+          "content_type": "application/json",
+          "body": {
+            "success": false,
+            "message": "Internal server error",
+            "data": null
+          }
+        }
+      }
+    },
+    {
+      "endpoint": "GET /api/auth/me",
+      "description": "Get current authenticated user information",
+      "public": false,
+      "authentication_required": true,
+      "request": {
+        "headers": {
+          "Authorization": "Bearer <token>"
+        }
+      },
+      "responses": {
+        "200": {
+          "description": "User information retrieved",
+          "content_type": "application/json",
+          "body": {
+            "success": true,
+            "message": "User information retrieved successfully",
+            "data": {
+              "user": {
+                "id": "string",
+                "email": "string",
+                "name": "string",
+                "role": "admin",
+                "last_login": "2024-01-15T10:30:00Z",
+                "created_at": "2024-01-01T00:00:00Z",
+                "session_expires_at": "2024-01-16T10:30:00Z"
+              }
+            }
+          }
+        },
+        "401": {
+          "description": "Invalid or expired token",
+          "content_type": "application/json",
+          "body": {
+            "success": false,
+            "message": "Invalid or expired token",
+            "data": null
+          }
+        },
+        "500": {
+          "description": "Server error",
+          "content_type": "application/json",
+          "body": {
+            "success": false,
+            "message": "Internal server error",
+            "data": null
+          }
+        }
+      }
+    },
+    {
+      "endpoint": "POST /api/auth/verify-token",
+      "description": "Verify if token is still valid",
+      "public": false,
+      "authentication_required": true,
+      "request": {
+        "content_type": "application/json",
+        "headers": {
+          "Authorization": "Bearer <token>"
+        },
+        "body": {
+          "token": {
+            "type": "string",
+            "required": true,
+            "description": "Token to verify"
+          }
+        }
+      },
+      "responses": {
+        "200": {
+          "description": "Token is valid",
+          "content_type": "application/json",
+          "body": {
+            "success": true,
+            "message": "Token is valid",
+            "data": {
+              "valid": true,
+              "expires_at": "2024-01-16T10:30:00Z",
+              "user_id": "string"
+            }
+          }
+        },
+        "401": {
+          "description": "Token is invalid or expired",
+          "content_type": "application/json",
+          "body": {
+            "success": false,
+            "message": "Token is invalid or expired",
+            "data": {
+              "valid": false,
+              "reason": "expired"
+            }
+          }
+        },
+        "500": {
+          "description": "Server error",
+          "content_type": "application/json",
+          "body": {
+            "success": false,
+            "message": "Internal server error",
+            "data": null
+          }
+        }
+      }
+    }
+  ],
+  "data_types": {
+    "User": {
+      "id": {
+        "type": "string",
+        "description": "Unique user identifier",
+        "example": "usr_123456789"
+      },
+      "email": {
+        "type": "string",
+        "format": "email",
+        "description": "User email address",
+        "example": "admin@company.com"
+      },
+      "name": {
+        "type": "string",
+        "description": "User full name",
+        "example": "John Administrator"
+      },
+      "role": {
+        "type": "string",
+        "enum": ["admin"],
+        "description": "User role (admin-only system)",
+        "example": "admin"
+      },
+      "last_login": {
+        "type": "string",
+        "format": "datetime",
+        "description": "Last login timestamp",
+        "example": "2024-01-15T10:30:00Z"
+      },
+      "created_at": {
+        "type": "string",
+        "format": "datetime",
+        "description": "Account creation timestamp",
+        "example": "2024-01-01T00:00:00Z"
+      },
+      "session_expires_at": {
+        "type": "string",
+        "format": "datetime",
+        "description": "Current session expiry time",
+        "example": "2024-01-16T10:30:00Z"
+      }
+    },
+    "AuthToken": {
+      "token": {
+        "type": "string",
+        "description": "JWT authentication token",
+        "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+      },
+      "expires_at": {
+        "type": "string",
+        "format": "datetime",
+        "description": "Token expiration timestamp",
+        "example": "2024-01-16T10:30:00Z"
+      }
+    },
+    "StandardResponse": {
+      "success": {
+        "type": "boolean",
+        "description": "Indicates if request was successful"
+      },
+      "message": {
+        "type": "string",
+        "description": "Human-readable response message"
+      },
+      "data": {
+        "type": "object|null",
+        "description": "Response data payload"
+      },
+      "errors": {
+        "type": "object",
+        "description": "Validation errors (present only on validation failures)",
+        "optional": true
+      }
+    }
+  },
+  "error_handling": {
+    "standard_errors": {
+      "400": "Bad Request - Invalid input data",
+      "401": "Unauthorized - Invalid or expired authentication",
+      "403": "Forbidden - Insufficient permissions",
+      "404": "Not Found - Resource not found",
+      "429": "Too Many Requests - Rate limit exceeded",
+      "500": "Internal Server Error - Server-side error"
+    },
+    "error_format": {
+      "success": false,
+      "message": "Human-readable error message",
+      "data": "null or error-specific data",
+      "errors": "Validation errors object (when applicable)"
+    }
+  }
+}
