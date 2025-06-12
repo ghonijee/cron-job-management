@@ -1,0 +1,627 @@
+{
+  "project": "Cron Jobs Management System",
+  "version": "1.0",
+  "phases": [
+    {
+      "phase_id": "P1",
+      "phase_name": "Project Setup & Infrastructure",
+      "duration": "2 days",
+      "scope": {
+        "description": "Initialize project with React, TypeScript, Vite, and configure development environment",
+        "deliverables": [
+          "Vite + React + TypeScript project setup",
+          "Tailwind CSS configuration",
+          "ESLint and Prettier configuration",
+          "Project folder structure as per GLOBAL RULES",
+          "Base routing setup",
+          "Environment variables configuration"
+        ]
+      },
+      "goals": [
+        "Establish consistent development environment",
+        "Implement feature-based folder structure",
+        "Configure build and development tools"
+      ],
+      "dependencies": {
+        "external": [],
+        "internal": []
+      },
+      "test_strategy": {
+        "unit_tests": "Verify build process and linting rules",
+        "integration_tests": "N/A",
+        "manual_tests": [
+          "Verify development server runs correctly",
+          "Confirm hot module replacement works",
+          "Test production build process"
+        ]
+      }
+    },
+    {
+      "phase_id": "P2",
+      "phase_name": "Shared Components Library",
+      "duration": "3 days",
+      "scope": {
+        "description": "Create reusable UI components following the design system",
+        "deliverables": [
+          "Button component with variants",
+          "Input and form field components",
+          "Modal/Dialog component",
+          "Table component with sorting",
+          "Loading spinner and skeleton loaders",
+          "Alert/Toast notification component",
+          "Card component",
+          "Badge/Status indicator component"
+        ]
+      },
+      "goals": [
+        "Build consistent UI component library",
+        "Ensure accessibility compliance",
+        "Create responsive, reusable components"
+      ],
+      "dependencies": {
+        "external": [],
+        "internal": ["P1"]
+      },
+      "test_strategy": {
+        "unit_tests": "Test each component with different props",
+        "integration_tests": "N/A",
+        "manual_tests": [
+          "Visual regression testing",
+          "Responsive design testing",
+          "Keyboard navigation testing"
+        ]
+      }
+    },
+    {
+      "phase_id": "P3",
+      "phase_name": "API Client & HTTP Layer",
+      "duration": "2 days",
+      "scope": {
+        "description": "Implement base API client and HTTP utilities",
+        "deliverables": [
+          "Base API client with fetch/axios",
+          "Request/Response interceptors",
+          "Error handling utilities",
+          "API response type definitions",
+          "Authentication token management",
+          "Request retry logic"
+        ]
+      },
+      "goals": [
+        "Create robust API communication layer",
+        "Standardize error handling",
+        "Implement consistent API response handling"
+      ],
+      "dependencies": {
+        "external": ["Backend API documentation"],
+        "internal": ["P1"]
+      },
+      "test_strategy": {
+        "unit_tests": "Test HTTP methods, interceptors, error handling",
+        "integration_tests": "Mock API endpoint testing",
+        "manual_tests": [
+          "Test with actual API endpoints",
+          "Verify error scenarios",
+          "Test timeout and retry logic"
+        ]
+      }
+    },
+    {
+      "phase_id": "P4",
+      "phase_name": "Authentication System",
+      "duration": "3 days",
+      "scope": {
+        "description": "Implement complete authentication flow",
+        "deliverables": [
+          "Login page and form",
+          "Authentication service",
+          "useAuth custom hook",
+          "Protected route component",
+          "Session management",
+          "Logout functionality",
+          "Remember me feature"
+        ]
+      },
+      "goals": [
+        "Secure authentication implementation",
+        "Persistent session management",
+        "User-friendly login experience"
+      ],
+      "dependencies": {
+        "external": ["Auth API endpoints"],
+        "internal": ["P2", "P3"]
+      },
+      "test_strategy": {
+        "unit_tests": "Test auth service methods, useAuth hook",
+        "integration_tests": "Test login flow, session persistence",
+        "manual_tests": [
+          "Test login with valid/invalid credentials",
+          "Verify session timeout",
+          "Test remember me functionality"
+        ]
+      }
+    },
+    {
+      "phase_id": "P5",
+      "phase_name": "Main Layout & Navigation",
+      "duration": "2 days",
+      "scope": {
+        "description": "Create application shell with navigation",
+        "deliverables": [
+          "Main layout component",
+          "Side navigation menu",
+          "Top header with user info",
+          "Breadcrumb component",
+          "Mobile responsive navigation",
+          "Layout context for state"
+        ]
+      },
+      "goals": [
+        "Intuitive navigation structure",
+        "Responsive layout for all devices",
+        "Consistent user experience"
+      ],
+      "dependencies": {
+        "external": [],
+        "internal": ["P2", "P4"]
+      },
+      "test_strategy": {
+        "unit_tests": "Test navigation state management",
+        "integration_tests": "Test routing and navigation",
+        "manual_tests": [
+          "Test responsive behavior",
+          "Verify navigation highlights",
+          "Test mobile menu functionality"
+        ]
+      }
+    },
+    {
+      "phase_id": "P6",
+      "phase_name": "Category Management - List View",
+      "duration": "3 days",
+      "scope": {
+        "description": "Implement category listing with search and filters",
+        "deliverables": [
+          "Categories list page",
+          "Server-side search with debouncing",
+          "Filter by status and color",
+          "Server-side pagination",
+          "Category statistics display",
+          "Quick actions (status toggle)"
+        ]
+      },
+      "goals": [
+        "Efficient category browsing",
+        "Fast server-side operations",
+        "Clear data presentation"
+      ],
+      "dependencies": {
+        "external": ["Category API endpoints"],
+        "internal": ["P2", "P3", "P5"]
+      },
+      "test_strategy": {
+        "unit_tests": "Test search debouncing, filter logic",
+        "integration_tests": "Test API integration with filters",
+        "manual_tests": [
+          "Test search functionality",
+          "Verify filter combinations",
+          "Test pagination performance"
+        ]
+      }
+    },
+    {
+      "phase_id": "P7",
+      "phase_name": "Category Management - CRUD Operations",
+      "duration": "3 days",
+      "scope": {
+        "description": "Implement create, update, delete operations for categories",
+        "deliverables": [
+          "Create category modal/page",
+          "Edit category functionality",
+          "Delete category with confirmation",
+          "Form validation",
+          "Success/error notifications",
+          "Category detail view"
+        ]
+      },
+      "goals": [
+        "Complete category management",
+        "Data integrity validation",
+        "User-friendly forms"
+      ],
+      "dependencies": {
+        "external": ["Category CRUD API endpoints"],
+        "internal": ["P6"]
+      },
+      "test_strategy": {
+        "unit_tests": "Test form validation, CRUD operations",
+        "integration_tests": "Test complete CRUD flow",
+        "manual_tests": [
+          "Test form validation rules",
+          "Verify delete confirmation",
+          "Test error handling"
+        ]
+      }
+    },
+    {
+      "phase_id": "P8",
+      "phase_name": "Jobs Management - List View",
+      "duration": "4 days",
+      "scope": {
+        "description": "Implement job listing with advanced features",
+        "deliverables": [
+          "Jobs list page",
+          "Server-side search with debouncing",
+          "Multi-filter system (status, category, cron)",
+          "Server-side pagination",
+          "Quick status toggle",
+          "Job analytics display",
+          "Manual trigger button"
+        ]
+      },
+      "goals": [
+        "Comprehensive job overview",
+        "Efficient job management",
+        "Quick access to common actions"
+      ],
+      "dependencies": {
+        "external": ["Jobs API endpoints"],
+        "internal": ["P2", "P3", "P5", "P7"]
+      },
+      "test_strategy": {
+        "unit_tests": "Test filter combinations, status toggle",
+        "integration_tests": "Test manual trigger functionality",
+        "manual_tests": [
+          "Test complex filter scenarios",
+          "Verify manual job execution",
+          "Test performance with many jobs"
+        ]
+      }
+    },
+    {
+      "phase_id": "P9",
+      "phase_name": "Jobs Management - Create/Edit Forms",
+      "duration": "4 days",
+      "scope": {
+        "description": "Implement comprehensive job creation and editing",
+        "deliverables": [
+          "Job creation form",
+          "Job edit functionality",
+          "Cron pattern validator",
+          "Category dropdown with lazy loading",
+          "HTTP method selection",
+          "Request body editor",
+          "Headers key-value editor",
+          "Advanced settings (timeout, retry)"
+        ]
+      },
+      "goals": [
+        "Intuitive job configuration",
+        "Robust validation",
+        "Support for complex job setups"
+      ],
+      "dependencies": {
+        "external": ["Jobs CRUD API endpoints"],
+        "internal": ["P8"]
+      },
+      "test_strategy": {
+        "unit_tests": "Test cron validation, form logic",
+        "integration_tests": "Test job creation flow",
+        "manual_tests": [
+          "Test cron pattern validation",
+          "Verify lazy loading dropdown",
+          "Test complex job configurations"
+        ]
+      }
+    },
+    {
+      "phase_id": "P10",
+      "phase_name": "Jobs Management - Detail View & Delete",
+      "duration": "2 days",
+      "scope": {
+        "description": "Implement job detail view and delete functionality",
+        "deliverables": [
+          "Job detail page",
+          "Delete job with confirmation",
+          "Job configuration display",
+          "Execution history link",
+          "Job statistics display"
+        ]
+      },
+      "goals": [
+        "Clear job information display",
+        "Safe delete operations",
+        "Easy navigation to related data"
+      ],
+      "dependencies": {
+        "external": ["Job detail API endpoint"],
+        "internal": ["P9"]
+      },
+      "test_strategy": {
+        "unit_tests": "Test delete confirmation logic",
+        "integration_tests": "Test navigation between views",
+        "manual_tests": [
+          "Verify all job details display",
+          "Test delete confirmation flow",
+          "Test statistics accuracy"
+        ]
+      }
+    },
+    {
+      "phase_id": "P11",
+      "phase_name": "Execution History - List & Filters",
+      "duration": "3 days",
+      "scope": {
+        "description": "Implement execution history with advanced filtering",
+        "deliverables": [
+          "History list page",
+          "Server-side search",
+          "Multi-filter system (job, category, status, date)",
+          "Date range picker",
+          "Server-side pagination",
+          "Status indicators"
+        ]
+      },
+      "goals": [
+        "Comprehensive execution tracking",
+        "Efficient history browsing",
+        "Clear status visualization"
+      ],
+      "dependencies": {
+        "external": ["History API endpoints"],
+        "internal": ["P2", "P3", "P5"]
+      },
+      "test_strategy": {
+        "unit_tests": "Test date range logic, filters",
+        "integration_tests": "Test filter combinations",
+        "manual_tests": [
+          "Test date range filtering",
+          "Verify large dataset performance",
+          "Test status indicators"
+        ]
+      }
+    },
+    {
+      "phase_id": "P12",
+      "phase_name": "Execution History - Detail View",
+      "duration": "2 days",
+      "scope": {
+        "description": "Implement detailed execution view",
+        "deliverables": [
+          "Execution detail modal/page",
+          "Response body viewer",
+          "Request details display",
+          "Timing information",
+          "Error details display"
+        ]
+      },
+      "goals": [
+        "Complete execution visibility",
+        "Easy debugging capabilities",
+        "Clear error information"
+      ],
+      "dependencies": {
+        "external": ["Execution detail API endpoint"],
+        "internal": ["P11"]
+      },
+      "test_strategy": {
+        "unit_tests": "Test response body formatting",
+        "integration_tests": "Test data loading",
+        "manual_tests": [
+          "Test with various response types",
+          "Verify error display",
+          "Test large response handling"
+        ]
+      }
+    },
+    {
+      "phase_id": "P13",
+      "phase_name": "Dashboard & Analytics",
+      "duration": "3 days",
+      "scope": {
+        "description": "Implement main dashboard with analytics",
+        "deliverables": [
+          "Dashboard page",
+          "Category statistics cards",
+          "Job overview widgets",
+          "Success/failure charts",
+          "Recent activity feed",
+          "Real-time status updates"
+        ]
+      },
+      "goals": [
+        "At-a-glance system overview",
+        "Real-time monitoring",
+        "Actionable insights"
+      ],
+      "dependencies": {
+        "external": ["Dashboard API endpoints"],
+        "internal": ["P2", "P3", "P5"]
+      },
+      "test_strategy": {
+        "unit_tests": "Test data aggregation logic",
+        "integration_tests": "Test real-time updates",
+        "manual_tests": [
+          "Verify statistics accuracy",
+          "Test real-time updates",
+          "Test widget interactions"
+        ]
+      }
+    },
+    {
+      "phase_id": "P14",
+      "phase_name": "Performance Optimization",
+      "duration": "2 days",
+      "scope": {
+        "description": "Optimize application performance",
+        "deliverables": [
+          "Code splitting implementation",
+          "Lazy loading for routes",
+          "Image optimization",
+          "Bundle size optimization",
+          "Caching strategy implementation",
+          "Performance monitoring setup"
+        ]
+      },
+      "goals": [
+        "Meet performance requirements (<3s load)",
+        "Optimize bundle size",
+        "Improve perceived performance"
+      ],
+      "dependencies": {
+        "external": [],
+        "internal": ["P1-P13"]
+      },
+      "test_strategy": {
+        "unit_tests": "N/A",
+        "integration_tests": "Performance benchmarks",
+        "manual_tests": [
+          "Lighthouse performance audit",
+          "Bundle size analysis",
+          "Load time testing"
+        ]
+      }
+    },
+    {
+      "phase_id": "P15",
+      "phase_name": "Error Handling & Edge Cases",
+      "duration": "2 days",
+      "scope": {
+        "description": "Implement comprehensive error handling",
+        "deliverables": [
+          "Global error boundary",
+          "Network error handling",
+          "404 page",
+          "Session timeout handling",
+          "Offline mode messaging",
+          "Error logging service"
+        ]
+      },
+      "goals": [
+        "Graceful error handling",
+        "Clear user communication",
+        "System stability"
+      ],
+      "dependencies": {
+        "external": [],
+        "internal": ["P1-P13"]
+      },
+      "test_strategy": {
+        "unit_tests": "Test error scenarios",
+        "integration_tests": "Test error boundaries",
+        "manual_tests": [
+          "Test network failures",
+          "Test session timeout",
+          "Test invalid routes"
+        ]
+      }
+    },
+    {
+      "phase_id": "P16",
+      "phase_name": "Security & Accessibility Audit",
+      "duration": "2 days",
+      "scope": {
+        "description": "Security hardening and accessibility compliance",
+        "deliverables": [
+          "Security audit fixes",
+          "WCAG 2.1 AA compliance",
+          "Input sanitization",
+          "XSS prevention",
+          "Accessibility improvements",
+          "Screen reader support"
+        ]
+      },
+      "goals": [
+        "Secure application",
+        "Accessible to all users",
+        "WCAG 2.1 AA compliance"
+      ],
+      "dependencies": {
+        "external": [],
+        "internal": ["P1-P15"]
+      },
+      "test_strategy": {
+        "unit_tests": "Test input sanitization",
+        "integration_tests": "Security vulnerability scan",
+        "manual_tests": [
+          "Accessibility audit (axe DevTools)",
+          "Screen reader testing",
+          "Keyboard navigation test"
+        ]
+      }
+    },
+    {
+      "phase_id": "P17",
+      "phase_name": "Final Integration & Testing",
+      "duration": "3 days",
+      "scope": {
+        "description": "End-to-end testing and final integration",
+        "deliverables": [
+          "E2E test suite",
+          "Integration test coverage",
+          "Performance benchmarks",
+          "User acceptance testing",
+          "Bug fixes",
+          "Documentation updates"
+        ]
+      },
+      "goals": [
+        "Production-ready application",
+        "All features working together",
+        "Meet all requirements"
+      ],
+      "dependencies": {
+        "external": ["Complete API integration"],
+        "internal": ["P1-P16"]
+      },
+      "test_strategy": {
+        "unit_tests": "Complete test coverage",
+        "integration_tests": "Full E2E test suite",
+        "manual_tests": [
+          "Complete user flow testing",
+          "Cross-browser testing",
+          "Load testing"
+        ]
+      }
+    }
+  ],
+  "total_duration": "49 days",
+  "critical_path": ["P1 → P3 → P4 → P5 → P6 → P7 → P8 → P9 → P10 → P17"],
+  "parallel_tracks": [
+    {
+      "track": "UI Components",
+      "phases": ["P2"],
+      "can_start_after": "P1"
+    },
+    {
+      "track": "Dashboard & History",
+      "phases": ["P11", "P12", "P13"],
+      "can_start_after": "P5"
+    },
+    {
+      "track": "Quality & Optimization",
+      "phases": ["P14", "P15", "P16"],
+      "can_start_after": "P13"
+    }
+  ],
+  "risk_mitigation": {
+    "api_delays": "Mock API responses for development",
+    "performance_issues": "Early performance testing in P8",
+    "complexity": "Iterative development with regular reviews"
+  },
+  "success_metrics": {
+    "technical": [
+      "All features implemented as per PRD",
+      "Page load time < 3 seconds",
+      "API response time < 2 seconds",
+      "Zero critical security vulnerabilities",
+      "WCAG 2.1 AA compliance achieved"
+    ],
+    "quality": [
+      "Unit test coverage > 70%",
+      "E2E test coverage for critical paths",
+      "No P1 bugs in production",
+      "Performance score > 90 in Lighthouse"
+    ]
+  }
+}
