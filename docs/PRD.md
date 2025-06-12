@@ -34,8 +34,9 @@
 **2.2.1 Category Listing**
 
 - **Display Fields:** Name, color indicator, description, job count, status
-- **Search:** Search categories by name with real-time filtering using server-side search
-- **Filtering:** Filter by status, color, and number of associated jobs using server-side filtering
+- **Search:** Search categories by name (server-side implementation)
+- **Filtering:** Filter by status, color, and number of associated jobs (server-side)
+- **Pagination:** Server-side pagination for all category lists
 - **Analytics:** Basic statistics showing category distribution and usage
 
 **2.2.2 Category Operations**
@@ -48,25 +49,27 @@
 **Acceptance Criteria:**
 
 - Category list displays all required fields clearly
-- Search functionality works in real-time
+- Search and filtering performed server-side with appropriate debouncing
 - Filters can be combined and applied simultaneously
+- Pagination controls provide smooth navigation
 - Category operations maintain data integrity
 
 #### 2.3 Cron Jobs Management (CRUD)
 
 **2.3.1 Jobs Listing**
 
-- **Display Fields:** Job name, category, cron pattern, humman readable cron pattern, status indicator
-- **Search:** Search jobs by name
-- **Filtering:** Filter by status, cron pattern, category
-- **Quick Actions:** Toggle active/inactive status directly from list, manually trigger job
+- **Display Fields:** Job name, category, cron pattern, status indicator
+- **Search:** Search jobs by name (server-side implementation)
+- **Filtering:** Filter by status, cron pattern, category (server-side)
+- **Pagination:** Server-side pagination for all job lists
+- **Quick Actions:** Toggle active/inactive status directly from list
 
 **2.3.2 Job Creation & Management**
 
 - **Required Fields:**
   - Name (unique identifier)
   - Description
-  - Category selection
+  - Category selection (with lazy scrolling for large lists)
   - Cron pattern (with validation)
   - Status (active/inactive)
   - Target URL
@@ -98,6 +101,9 @@
 - Cron pattern validation prevents invalid schedules
 - Manual trigger provides immediate feedback
 - Job analytics display accurate metrics
+- Server-side search and filtering with appropriate debouncing
+- Pagination provides smooth navigation through large datasets
+- Category dropdowns use lazy scrolling for performance
 
 #### 2.4 Execution History (Read-Only)
 
@@ -110,17 +116,19 @@
   - Response time (duration)
   - HTTP response status
   - Response body preview
+- **Pagination:** Server-side pagination for history records
 
 **2.4.2 History Operations**
 
-- **Search:** Find executions by job name
-- **Filtering:** Filter by job ID, category, status, date range
+- **Search:** Find executions by job name (server-side implementation)
+- **Filtering:** Filter by job ID, category, status, date range (server-side)
 - **Detail View:** Full execution details including complete response
 
 **Acceptance Criteria:**
 
 - History records are displayed in chronological order
-- Filtering and search work accurately
+- Server-side filtering and search with appropriate debouncing
+- Pagination handles large datasets efficiently
 - Detail view shows complete execution information
 - Performance remains good with large datasets
 
@@ -153,6 +161,8 @@
 - **State Management:** Centralized state management for application data
 - **Routing:** Client-side routing for navigation
 - **API Integration:** RESTful API communication with backend services
+- **Server-side Processing:** All search, filtering, and pagination handled by backend
+- **Lazy Loading:** Implement lazy scrolling for large dropdown lists
 
 #### 3.2 User Interface Requirements
 
@@ -179,7 +189,9 @@
 
 #### 4.2 Data Presentation
 
-- **Tables:** Sortable, filterable data tables with pagination
+- **Tables:** Sortable data tables with server-side pagination
+- **Search & Filters:** Server-side implementation with debouncing (300ms delay)
+- **Dropdowns:** Lazy scrolling for lists with 100+ items
 - **Forms:** Intuitive form design with validation feedback
 - **Status Indicators:** Clear visual status representation
 - **Loading States:** Appropriate loading indicators for async operations
@@ -223,7 +235,31 @@
 - **Load Handling:** Support for increased concurrent users
 - **Data Archiving:** Historical data management strategy
 
-### 8. Success Metrics
+### 8. Server-Side Processing Requirements
+
+#### 8.1 Search & Filter Implementation
+
+- **Server-side Processing:** All search and filtering operations must be handled by the backend API
+- **Debouncing:** Frontend implements 300ms debouncing for search inputs to reduce API calls
+- **Performance:** Search queries optimized with database indexing
+- **Combining Filters:** Support multiple simultaneous filters with efficient query building
+
+#### 8.2 Pagination Requirements
+
+- **Server-side Pagination:** All list data (categories, jobs, history) paginated on backend
+- **Page Size:** Configurable page sizes (default: 25, options: 10, 25, 50, 100)
+- **Performance:** Efficient database queries using LIMIT/OFFSET or cursor-based pagination
+- **Metadata:** API returns total count, current page, total pages, and pagination controls
+
+#### 8.3 Lazy Loading for Dropdowns
+
+- **Implementation:** Dropdowns with 100+ items must use lazy scrolling
+- **Applicable Components:**
+  - Category selection dropdowns
+  - Job selection for history filtering
+  - User selection (if applicable)
+- **Performance:** Load initial 20 items, fetch additional items on scroll
+- **Search Integration:** Server-side search within lazy-loaded dropdowns
 
 - **User Adoption:** Active user engagement metrics
 - **System Reliability:** Job execution success rates
