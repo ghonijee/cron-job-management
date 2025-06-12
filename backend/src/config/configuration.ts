@@ -30,4 +30,7 @@ export default () => ({
     accessExpiresIn: process.env.JWT_ACCESS_EXPIRY || '15m',
     refreshExpiresIn: process.env.JWT_REFRESH_EXPIRY || '7d',
   },
+  cors: {
+    origin: process.env.CORS_ORIGIN?.split(',') || ['http://localhost:5173'],
+  },
 });
