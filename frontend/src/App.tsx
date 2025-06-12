@@ -1,53 +1,24 @@
-import { useState } from 'react';
-import reactLogo from './assets/react.svg';
-import viteLogo from '/vite.svg';
-import { Button } from '@/components/shared';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { ROUTES } from '@/routes';
+import { Dashboard } from '@/pages/dashboard/Dashboard';
+import { Login } from '@/pages/auth/Login';
+import { Categories } from '@/pages/category/Categories';
+import { Jobs } from '@/pages/job/Jobs';
+import { History } from '@/pages/history/History';
+import { NotFound } from '@/pages/NotFound';
 
 function App() {
-  const [count, setCount] = useState(0);
-
   return (
-    <div className="min-h-screen bg-gray-100 flex flex-col items-center justify-center">
-      <div className="flex space-x-8 mb-8">
-        <a
-          href="https://vite.dev"
-          target="_blank"
-          className="hover:opacity-80 transition-opacity"
-        >
-          <img src={viteLogo} className="h-16 w-16" alt="Vite logo" />
-        </a>
-        <a
-          href="https://react.dev"
-          target="_blank"
-          className="hover:opacity-80 transition-opacity"
-        >
-          <img
-            src={reactLogo}
-            className="h-16 w-16 animate-spin"
-            alt="React logo"
-          />
-        </a>
-      </div>
-      <h1 className="text-4xl font-bold text-gray-900 mb-8">
-        Vite + React + Tailwind
-      </h1>
-      <div className="bg-white p-8 rounded-lg shadow-lg">
-        <Button
-          onClick={() => setCount((count) => count + 1)}
-          className="mb-4"
-        >
-          count is {count}
-        </Button>
-        <p className="text-gray-600">
-          Edit{' '}
-          <code className="bg-gray-200 px-2 py-1 rounded">src/App.tsx</code> and
-          save to test HMR
-        </p>
-      </div>
-      <p className="text-gray-500 mt-8">
-        Click on the Vite and React logos to learn more
-      </p>
-    </div>
+    <Router>
+      <Routes>
+        <Route path={ROUTES.DASHBOARD} element={<Dashboard />} />
+        <Route path={ROUTES.LOGIN} element={<Login />} />
+        <Route path={ROUTES.CATEGORIES} element={<Categories />} />
+        <Route path={ROUTES.JOBS} element={<Jobs />} />
+        <Route path={ROUTES.HISTORY} element={<History />} />
+        <Route path="*" element={<NotFound />} />
+      </Routes>
+    </Router>
   );
 }
 
