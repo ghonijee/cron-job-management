@@ -1,2 +1,10 @@
 // Shared components barrel exports
+
+// Types and interfaces
+export * from './types';
+
+// Components
 export * from './Button';
+export * from './Input';
+export * from './TextArea';
+export * from './Select';
