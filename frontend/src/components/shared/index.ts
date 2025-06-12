@@ -9,3 +9,5 @@ export * from './Input';
 export * from './TextArea';
 export * from './Select';
 export * from './Table';
+export * from './Spinner';
+export * from './Skeleton';
