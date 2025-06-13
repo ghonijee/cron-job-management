@@ -1,0 +1,19 @@
+{
+  "name": "cron-system-management",
+  "version": "1.0.0",
+  "description": "Cron System Management Application",
+  "scripts": {
+    "dev": "concurrently \"npm run backend:dev\" \"npm run frontend:dev\"",
+    "start": "concurrently \"npm run backend:start\" \"npm run frontend:start\"",
+    "build": "npm run backend:build && npm run frontend:build",
+    "backend:dev": "cd backend && npm run start:dev",
+    "backend:start": "cd backend && npm run start:prod",
+    "backend:build": "cd backend && npm run build",
+    "frontend:dev": "cd frontend && npm run dev",
+    "frontend:start": "cd frontend && npm run start",
+    "frontend:build": "cd frontend && npm run build"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }
+}
