@@ -1,0 +1,513 @@
+import React, { useState } from 'react';
+import { 
+  Button, 
+  Alert, 
+  ToastProvider, 
+  useToast,
+  Card,
+  Badge,
+  StatusIndicator
+} from '../index';
+import { 
+  CheckCircle, 
+  AlertCircle, 
+  Info, 
+  XCircle,
+  Bell,
+  Zap
+} from 'lucide-react';
+
+/**
+ * NotificationExample - Demonstrates alert and toast notification systems
+ * 
+ * Features:
+ * - Different alert variants
+ * - Toast notifications with auto-dismiss
+ * - Custom notification content
+ * - Accessibility features
+ */
+
+const NotificationContent: React.FC = () => {
+  const { showToast } = useToast();
+  const [alerts, setAlerts] = useState({
+    success: true,
+    error: true,
+    warning: true,
+    info: true
+  });
+
+  const [notifications] = useState([
+    {
+      id: 1,
+      type: 'success' as const,
+      title: 'Backup Completed',
+      message: 'Daily database backup completed successfully',
+      time: '2 minutes ago',
+      read: false
+    },
+    {
+      id: 2,
+      type: 'error' as const,
+      title: 'API Health Check Failed',
+      message: 'External API is not responding. Retrying in 5 minutes.',
+      time: '5 minutes ago',
+      read: false
+    },
+    {
+      id: 3,
+      type: 'warning' as const,
+      title: 'High Memory Usage',
+      message: 'Server memory usage is at 85%. Consider scaling up.',
+      time: '10 minutes ago',
+      read: true
+    },
+    {
+      id: 4,
+      type: 'info' as const,
+      title: 'Maintenance Window',
+      message: 'Scheduled maintenance will begin at 2:00 AM UTC',
+      time: '1 hour ago',
+      read: true
+    }
+  ]);
+
+  const dismissAlert = (alertType: keyof typeof alerts) => {
+    setAlerts(prev => ({ ...prev, [alertType]: false }));
+  };
+
+  const showSuccessToast = () => {
+    showToast({
+      title: 'Job Executed Successfully',
+      description: 'The cron job "Daily Report" has been executed without errors.',
+      variant: 'success',
+      duration: 4000
+    });
+  };
+
+  const showErrorToast = () => {
+    showToast({
+      title: 'Job Execution Failed',
+      description: 'The cron job "API Sync" failed with error code 500. Check logs for details.',
+      variant: 'error',
+      duration: 6000
+    });
+  };
+
+  const showWarningToast = () => {
+    showToast({
+      title: 'Job Taking Longer Than Expected',
+      description: 'The cron job "Data Processing" is taking longer than usual to complete.',
+      variant: 'warning',
+      duration: 5000
+    });
+  };
+
+  const showInfoToast = () => {
+    showToast({
+      title: 'New Job Scheduled',
+      description: 'A new cron job "Weekly Cleanup" has been scheduled for every Sunday at 3:00 AM.',
+      variant: 'info',
+      duration: 4000
+    });
+  };
+
+  const showCustomToast = () => {
+    showToast({
+      title: 'Custom Notification',
+      description: 'This is a custom toast with longer duration and custom styling.',
+      variant: 'success',
+      duration: 8000
+    });
+  };
+
+  const getNotificationIcon = (type: string) => {
+    switch (type) {
+      case 'success':
+        return <CheckCircle className="h-5 w-5 text-green-500" />;
+      case 'error':
+        return <XCircle className="h-5 w-5 text-red-500" />;
+      case 'warning':
+        return <AlertCircle className="h-5 w-5 text-yellow-500" />;
+      case 'info':
+        return <Info className="h-5 w-5 text-blue-500" />;
+      default:
+        return <Bell className="h-5 w-5 text-gray-500" />;
+    }
+  };
+
+  const getNotificationBadgeColor = (type: string) => {
+    switch (type) {
+      case 'success':
+        return 'green';
+      case 'error':
+        return 'red';
+      case 'warning':
+        return 'yellow';
+      case 'info':
+        return 'blue';
+      default:
+        return 'gray';
+    }
+  };
+
+  return (
+    <div className="max-w-4xl mx-auto p-6 space-y-8">
+      {/* Page Header */}
+      <Card>
+        <Card.Header>
+          <h1 className="text-2xl font-bold text-gray-900">
+            Notification System Examples
+          </h1>
+          <p className="text-gray-600 mt-2">
+            Alerts, toasts, and notification patterns with accessibility features
+          </p>
+        </Card.Header>
+      </Card>
+
+      {/* Alert Examples */}
+      <Card>
+        <Card.Header>
+          <h2 className="text-lg font-semibold">Alert Components</h2>
+          <p className="text-gray-600 text-sm">
+            Persistent notifications for important messages
+          </p>
+        </Card.Header>
+        <Card.Content>
+          <div className="space-y-4">
+            {alerts.success && (
+              <Alert
+                variant="success"
+                dismissible
+                onDismiss={() => dismissAlert('success')}
+                data-testid="success-alert"
+              >
+                <div className="flex items-start gap-3">
+                  <CheckCircle className="h-5 w-5 text-green-500 mt-0.5" />
+                  <div>
+                    <h3 className="font-medium">Backup Completed Successfully</h3>
+                    <p className="text-sm mt-1">
+                      All scheduled backups have been completed without errors. 
+                      Next backup is scheduled for tomorrow at 2:00 AM.
+                    </p>
+                  </div>
+                </div>
+              </Alert>
+            )}
+
+            {alerts.error && (
+              <Alert
+                variant="error"
+                dismissible
+                onDismiss={() => dismissAlert('error')}
+                data-testid="error-alert"
+              >
+                <div className="flex items-start gap-3">
+                  <XCircle className="h-5 w-5 text-red-500 mt-0.5" />
+                  <div>
+                    <h3 className="font-medium">Critical Job Failure</h3>
+                    <p className="text-sm mt-1">
+                      The "Database Sync" job has failed 3 times consecutively. 
+                      Please check the logs and database connection.
+                    </p>
+                    <div className="mt-2">
+                      <Button variant="secondary" size="sm">
+                        View Logs
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+              </Alert>
+            )}
+
+            {alerts.warning && (
+              <Alert
+                variant="warning"
+                dismissible
+                onDismiss={() => dismissAlert('warning')}
+                data-testid="warning-alert"
+              >
+                <div className="flex items-start gap-3">
+                  <AlertCircle className="h-5 w-5 text-yellow-500 mt-0.5" />
+                  <div>
+                    <h3 className="font-medium">High CPU Usage Detected</h3>
+                    <p className="text-sm mt-1">
+                      Server CPU usage has been above 80% for the last 10 minutes. 
+                      Consider optimizing job schedules or upgrading resources.
+                    </p>
+                  </div>
+                </div>
+              </Alert>
+            )}
+
+            {alerts.info && (
+              <Alert
+                variant="info"
+                dismissible
+                onDismiss={() => dismissAlert('info')}
+                data-testid="info-alert"
+              >
+                <div className="flex items-start gap-3">
+                  <Info className="h-5 w-5 text-blue-500 mt-0.5" />
+                  <div>
+                    <h3 className="font-medium">Maintenance Notification</h3>
+                    <p className="text-sm mt-1">
+                      Scheduled maintenance will occur on Sunday, January 21st from 
+                      2:00 AM to 4:00 AM UTC. Some jobs may be delayed during this period.
+                    </p>
+                  </div>
+                </div>
+              </Alert>
+            )}
+          </div>
+        </Card.Content>
+      </Card>
+
+      {/* Toast Examples */}
+      <Card>
+        <Card.Header>
+          <h2 className="text-lg font-semibold">Toast Notifications</h2>
+          <p className="text-gray-600 text-sm">
+            Non-blocking notifications with auto-dismiss
+          </p>
+        </Card.Header>
+        <Card.Content>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <Button
+              variant="primary"
+              onClick={showSuccessToast}
+              icon={<CheckCircle />}
+              data-testid="success-toast-btn"
+            >
+              Success Toast
+            </Button>
+
+            <Button
+              variant="danger"
+              onClick={showErrorToast}
+              icon={<XCircle />}
+              data-testid="error-toast-btn"
+            >
+              Error Toast
+            </Button>
+
+            <Button
+              variant="secondary"
+              onClick={showWarningToast}
+              icon={<AlertCircle />}
+              data-testid="warning-toast-btn"
+            >
+              Warning Toast
+            </Button>
+
+            <Button
+              variant="secondary"
+              onClick={showInfoToast}
+              icon={<Info />}
+              data-testid="info-toast-btn"
+            >
+              Info Toast
+            </Button>
+
+            <Button
+              variant="secondary"
+              onClick={showCustomToast}
+              icon={<Zap />}
+              data-testid="custom-toast-btn"
+            >
+              Custom Toast
+            </Button>
+          </div>
+        </Card.Content>
+      </Card>
+
+      {/* Notification Center */}
+      <Card>
+        <Card.Header>
+          <div className="flex items-center justify-between">
+            <div>
+              <h2 className="text-lg font-semibold">Notification Center</h2>
+              <p className="text-gray-600 text-sm">
+                Recent system notifications and job status updates
+              </p>
+            </div>
+            <div className="flex items-center gap-2">
+              <Badge variant="solid" color="red" size="sm">
+                {notifications.filter(n => !n.read).length} New
+              </Badge>
+              <Button variant="secondary" size="sm">
+                Mark All Read
+              </Button>
+            </div>
+          </div>
+        </Card.Header>
+        <Card.Content>
+          <div className="space-y-4">
+            {notifications.map((notification) => (
+              <div
+                key={notification.id}
+                className={`flex items-start gap-4 p-4 rounded-lg border transition-colors ${
+                  notification.read 
+                    ? 'bg-gray-50 border-gray-200' 
+                    : 'bg-white border-gray-300'
+                }`}
+              >
+                <div className="flex-shrink-0">
+                  {getNotificationIcon(notification.type)}
+                </div>
+                
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-start justify-between gap-2">
+                    <h3 className={`font-medium ${
+                      notification.read ? 'text-gray-700' : 'text-gray-900'
+                    }`}>
+                      {notification.title}
+                    </h3>
+                    <div className="flex items-center gap-2 flex-shrink-0">
+                      <Badge
+                        variant="soft"
+                        color={getNotificationBadgeColor(notification.type)}
+                        size="sm"
+                      >
+                        {notification.type}
+                      </Badge>
+                      {!notification.read && (
+                        <div className="h-2 w-2 bg-blue-500 rounded-full"></div>
+                      )}
+                    </div>
+                  </div>
+                  
+                  <p className={`text-sm mt-1 ${
+                    notification.read ? 'text-gray-500' : 'text-gray-600'
+                  }`}>
+                    {notification.message}
+                  </p>
+                  
+                  <div className="flex items-center justify-between mt-2">
+                    <span className="text-xs text-gray-400">
+                      {notification.time}
+                    </span>
+                    <div className="flex gap-2">
+                      <Button variant="secondary" size="sm">
+                        View Details
+                      </Button>
+                      {notification.type === 'error' && (
+                        <Button variant="secondary" size="sm">
+                          Retry
+                        </Button>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </Card.Content>
+      </Card>
+
+      {/* Real-time Status */}
+      <Card>
+        <Card.Header>
+          <h2 className="text-lg font-semibold">Real-time Status Indicators</h2>
+          <p className="text-gray-600 text-sm">
+            Live system status with animated indicators
+          </p>
+        </Card.Header>
+        <Card.Content>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div className="text-center">
+              <StatusIndicator
+                status="active"
+                size="lg"
+                pulse
+                text="System Online"
+                variant="detailed"
+              />
+              <p className="text-sm text-gray-600 mt-2">
+                All systems operational
+              </p>
+            </div>
+
+            <div className="text-center">
+              <StatusIndicator
+                status="pending"
+                size="lg"
+                pulse
+                text="Jobs Running"
+                variant="detailed"
+              />
+              <p className="text-sm text-gray-600 mt-2">
+                3 jobs currently executing
+              </p>
+            </div>
+
+            <div className="text-center">
+              <StatusIndicator
+                status="error"
+                size="lg"
+                text="Service Error"
+                variant="detailed"
+              />
+              <p className="text-sm text-gray-600 mt-2">
+                External API unavailable
+              </p>
+            </div>
+
+            <div className="text-center">
+              <StatusIndicator
+                status="success"
+                size="lg"
+                text="Last Backup"
+                variant="detailed"
+              />
+              <p className="text-sm text-gray-600 mt-2">
+                Completed 2 hours ago
+              </p>
+            </div>
+          </div>
+        </Card.Content>
+      </Card>
+
+      {/* Implementation Notes */}
+      <Card>
+        <Card.Header>
+          <h2 className="text-lg font-semibold">Notification System Features</h2>
+        </Card.Header>
+        <Card.Content>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-sm">
+            <div>
+              <h3 className="font-medium text-gray-900 mb-2">Accessibility:</h3>
+              <ul className="list-disc list-inside text-gray-600 space-y-1">
+                <li>Screen reader announcements for dynamic notifications</li>
+                <li>ARIA live regions for toast updates</li>
+                <li>Keyboard dismissal (ESC key)</li>
+                <li>High contrast color support</li>
+                <li>Focus management for actionable alerts</li>
+              </ul>
+            </div>
+            
+            <div>
+              <h3 className="font-medium text-gray-900 mb-2">UX Features:</h3>
+              <ul className="list-disc list-inside text-gray-600 space-y-1">
+                <li>Auto-dismiss with configurable timing</li>
+                <li>Stacking and queuing for multiple toasts</li>
+                <li>Persistent alerts for critical information</li>
+                <li>Visual hierarchy with icons and colors</li>
+                <li>Responsive design for mobile devices</li>
+              </ul>
+            </div>
+          </div>
+        </Card.Content>
+      </Card>
+    </div>
+  );
+};
+
+export const NotificationExample: React.FC = () => {
+  return (
+    <ToastProvider>
+      <NotificationContent />
+    </ToastProvider>
+  );
+};
+
+export default NotificationExample;
