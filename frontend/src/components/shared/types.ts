@@ -146,3 +146,7 @@ export type RequireField<T, K extends keyof T> = T & Required<Pick<T, K>>;
 
 // Component ref types (for forwardRef components)
 export type ComponentRef<T = HTMLElement> = T | null;
+
+// Re-export commonly used component types
+export type { SelectOption } from './Select/types';
+export type { TableColumn } from './Table/types';

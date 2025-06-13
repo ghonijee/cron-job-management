@@ -1,0 +1,234 @@
+import React, { useState } from 'react';
+import { 
+  Button, 
+  Input, 
+  TextArea, 
+  Select, 
+  Alert,
+  Card 
+} from '../index';
+import type { SelectOption } from '../types';
+
+/**
+ * FormExample - Demonstrates form components working together
+ * 
+ * Features:
+ * - Form validation
+ * - Loading states
+ * - Error handling
+ * - Accessibility
+ */
+export const FormExample: React.FC = () => {
+  const [formData, setFormData] = useState({
+    name: '',
+    email: '',
+    category: '',
+    description: ''
+  });
+  
+  const [errors, setErrors] = useState<Record<string, string>>({});
+  const [isLoading, setIsLoading] = useState(false);
+  const [showSuccess, setShowSuccess] = useState(false);
+
+  const categoryOptions: SelectOption[] = [
+    { value: 'general', label: 'General' },
+    { value: 'technical', label: 'Technical' },
+    { value: 'billing', label: 'Billing' },
+    { value: 'support', label: 'Support' }
+  ];
+
+  const validateForm = (): boolean => {
+    const newErrors: Record<string, string> = {};
+
+    if (!formData.name.trim()) {
+      newErrors.name = 'Name is required';
+    }
+
+    if (!formData.email.trim()) {
+      newErrors.email = 'Email is required';
+    } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
+      newErrors.email = 'Email is invalid';
+    }
+
+    if (!formData.category) {
+      newErrors.category = 'Category is required';
+    }
+
+    if (!formData.description.trim()) {
+      newErrors.description = 'Description is required';
+    } else if (formData.description.length < 10) {
+      newErrors.description = 'Description must be at least 10 characters';
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (!validateForm()) return;
+
+    setIsLoading(true);
+    setShowSuccess(false);
+
+    // Simulate API call
+    try {
+      await new Promise(resolve => setTimeout(resolve, 2000));
+      setShowSuccess(true);
+      setFormData({ name: '', email: '', category: '', description: '' });
+      setErrors({});
+    } catch (error) {
+      setErrors({ submit: 'Something went wrong. Please try again.' });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleInputChange = (field: string) => (value: string) => {
+    setFormData(prev => ({ ...prev, [field]: value }));
+    // Clear error when user starts typing
+    if (errors[field]) {
+      setErrors(prev => ({ ...prev, [field]: '' }));
+    }
+  };
+
+  return (
+    <div className="max-w-2xl mx-auto p-6">
+      <Card>
+        <Card.Header>
+          <h1 className="text-2xl font-bold text-gray-900">
+            Contact Form Example
+          </h1>
+          <p className="text-gray-600 mt-2">
+            Demonstrates form components with validation and accessibility
+          </p>
+        </Card.Header>
+
+        <Card.Content>
+          {showSuccess && (
+            <Alert 
+              variant="success" 
+              className="mb-6"
+              dismissible
+              onDismiss={() => setShowSuccess(false)}
+            >
+              Form submitted successfully! Thank you for your message.
+            </Alert>
+          )}
+
+          {errors.submit && (
+            <Alert variant="error" className="mb-6">
+              {errors.submit}
+            </Alert>
+          )}
+
+          <form onSubmit={handleSubmit} className="space-y-6">
+            <Input
+              label="Full Name"
+              placeholder="Enter your full name"
+              value={formData.name}
+              onChange={handleInputChange('name')}
+              error={errors.name}
+              required
+              data-testid="name-input"
+            />
+
+            <Input
+              label="Email Address"
+              type="email"
+              placeholder="Enter your email"
+              value={formData.email}
+              onChange={handleInputChange('email')}
+              error={errors.email}
+              required
+              data-testid="email-input"
+            />
+
+            <Select
+              label="Category"
+              placeholder="Select a category"
+              options={categoryOptions}
+              value={formData.category}
+              onChange={handleInputChange('category')}
+              error={errors.category}
+              required
+              data-testid="category-select"
+            />
+
+            <TextArea
+              label="Message"
+              placeholder="Enter your message (minimum 10 characters)"
+              rows={4}
+              value={formData.description}
+              onChange={handleInputChange('description')}
+              error={errors.description}
+              required
+              data-testid="description-textarea"
+            />
+
+            <div className="flex gap-3 pt-4">
+              <Button
+                type="submit"
+                variant="primary"
+                size="lg"
+                loading={isLoading}
+                className="flex-1"
+                data-testid="submit-button"
+              >
+                {isLoading ? 'Submitting...' : 'Submit Form'}
+              </Button>
+              
+              <Button
+                type="button"
+                variant="secondary"
+                size="lg"
+                onClick={() => {
+                  setFormData({ name: '', email: '', category: '', description: '' });
+                  setErrors({});
+                  setShowSuccess(false);
+                }}
+                disabled={isLoading}
+                data-testid="reset-button"
+              >
+                Reset
+              </Button>
+            </div>
+          </form>
+        </Card.Content>
+      </Card>
+
+      {/* Usage Notes */}
+      <Card className="mt-8">
+        <Card.Header>
+          <h2 className="text-lg font-semibold">Implementation Notes</h2>
+        </Card.Header>
+        <Card.Content>
+          <div className="space-y-4 text-sm">
+            <div>
+              <h3 className="font-medium text-gray-900">Accessibility Features:</h3>
+              <ul className="list-disc list-inside text-gray-600 mt-1 space-y-1">
+                <li>All form controls have proper labels</li>
+                <li>Error messages are announced to screen readers</li>
+                <li>Form validation happens on submit and clears on input</li>
+                <li>Loading states prevent multiple submissions</li>
+                <li>Keyboard navigation works throughout</li>
+              </ul>
+            </div>
+            
+            <div>
+              <h3 className="font-medium text-gray-900">Responsive Design:</h3>
+              <ul className="list-disc list-inside text-gray-600 mt-1 space-y-1">
+                <li>Form adapts to mobile and desktop screens</li>
+                <li>Touch-friendly input sizes on mobile</li>
+                <li>Appropriate spacing and typography scaling</li>
+              </ul>
+            </div>
+          </div>
+        </Card.Content>
+      </Card>
+    </div>
+  );
+};
+
+export default FormExample;
