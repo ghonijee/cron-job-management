@@ -15,3 +15,5 @@ export * from './Skeleton';
 export * from './Alert';
 export * from './Toast';
 export * from './Card';
+export * from './Badge';
+export * from './StatusIndicator';
