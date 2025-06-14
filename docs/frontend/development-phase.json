@@ -83,7 +83,6 @@
           "Request/Response interceptors",
           "Error handling utilities",
           "API response type definitions",
-          "Authentication token management",
           "Request retry logic"
         ]
       },
@@ -118,6 +117,7 @@
           "useAuth custom hook",
           "Protected route component",
           "Session management",
+          "Authentication token management",
           "Logout functionality",
           "Remember me feature"
         ]
