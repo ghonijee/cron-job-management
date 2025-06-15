@@ -18,11 +18,6 @@ export interface ApiRequestConfig extends Omit<AxiosRequestConfig, 'url'> {
   skipInterceptors?: boolean;
 }
 
-export interface ApiClientResponse<T = unknown> extends AxiosResponse<T> {
-  requestId?: string;
-  cached?: boolean;
-}
-
 // ==========================================
 // Error Types
 // ==========================================

@@ -369,33 +369,4 @@ describe('ApiClient', () => {
       expect(status.failedRequests).toBe(0);
     });
   });
-
-  // describe('validateStatus function', () => {
-  //   it('should not throw for client errors (4xx)', () => {
-  //     const client = new ApiClient();
-  //     const validateStatus = mockedAxios.create.mock.calls[0][0].validateStatus;
-
-  //     expect(validateStatus(400)).toBe(true);
-  //     expect(validateStatus(404)).toBe(true);
-  //     expect(validateStatus(422)).toBe(true);
-  //   });
-
-  //   it('should throw for server errors (5xx)', () => {
-  //     const client = new ApiClient();
-  //     const validateStatus = mockedAxios.create.mock.calls[0][0].validateStatus;
-
-  //     expect(validateStatus(500)).toBe(false);
-  //     expect(validateStatus(502)).toBe(false);
-  //     expect(validateStatus(503)).toBe(false);
-  //   });
-
-  //   it('should not throw for success responses (2xx)', () => {
-  //     const client = new ApiClient();
-  //     const validateStatus = mockedAxios.create.mock.calls[0][0].validateStatus;
-
-  //     expect(validateStatus(200)).toBe(true);
-  //     expect(validateStatus(201)).toBe(true);
-  //     expect(validateStatus(204)).toBe(true);
-  //   });
-  // });
 });

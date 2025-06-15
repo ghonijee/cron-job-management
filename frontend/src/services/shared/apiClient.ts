@@ -1,9 +1,8 @@
-import axios, { type AxiosInstance } from 'axios';
+import axios, { type AxiosInstance, type AxiosResponse } from 'axios';
 import { env } from '@/utils/shared/env';
 import type {
   ApiClientConfig,
   ApiRequestConfig,
-  ApiClientResponse,
   ApiClientError,
   RequestMetadata,
   ClientStatus,
@@ -83,7 +82,7 @@ export class ApiClient {
     method: HttpMethod,
     url: string,
     config?: ApiRequestConfig
-  ): Promise<ApiClientResponse<T>> {
+  ): Promise<AxiosResponse<T>> {
     try {
       const response = await this.axiosInstance.request<T>({
         method,
@@ -91,13 +90,13 @@ export class ApiClient {
         ...config,
       });
 
-      return response as ApiClientResponse<T>;
+      return response as AxiosResponse<T>;
     } catch (error) {
       throw error; // Already transformed by interceptor
     }
   }
 
-  async get<T = unknown>(url: string, config?: ApiRequestConfig): Promise<ApiClientResponse<T>> {
+  async get<T = unknown>(url: string, config?: ApiRequestConfig): Promise<AxiosResponse<T>> {
     return this.request<T>('GET', url, config);
   }
 
@@ -105,7 +104,7 @@ export class ApiClient {
     url: string,
     data?: unknown,
     config?: ApiRequestConfig
-  ): Promise<ApiClientResponse<T>> {
+  ): Promise<AxiosResponse<T>> {
     return this.request<T>('POST', url, { ...config, data });
   }
 
@@ -113,11 +112,11 @@ export class ApiClient {
     url: string,
     data?: unknown,
     config?: ApiRequestConfig
-  ): Promise<ApiClientResponse<T>> {
+  ): Promise<AxiosResponse<T>> {
     return this.request<T>('PUT', url, { ...config, data });
   }
 
-  async delete<T = unknown>(url: string, config?: ApiRequestConfig): Promise<ApiClientResponse<T>> {
+  async delete<T = unknown>(url: string, config?: ApiRequestConfig): Promise<AxiosResponse<T>> {
     return this.request<T>('DELETE', url, config);
   }
 
@@ -125,7 +124,7 @@ export class ApiClient {
     url: string,
     data?: unknown,
     config?: ApiRequestConfig
-  ): Promise<ApiClientResponse<T>> {
+  ): Promise<AxiosResponse<T>> {
     return this.request<T>('PATCH', url, { ...config, data });
   }
 
@@ -231,7 +230,7 @@ export const apiClient = {
 export type {
   ApiClientConfig,
   ApiRequestConfig,
-  ApiClientResponse,
+  AxiosResponse,
   ApiClientError,
   RequestMetadata,
   ClientStatus,
