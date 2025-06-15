@@ -10,6 +10,7 @@ This task uses the same logic as the commit task (.claude/commands/commit.md) bu
 
 ## Rules
 
+- Stage file before commit group by the same scope
 - Generate 3 commit message suggestions following the same format as the commit task
 - Automatically use the first suggestion without asking the user
 - Immediately run `git commit -m` with the first message
