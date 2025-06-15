@@ -153,7 +153,7 @@ describe('API Types', () => {
 
       if (isSuccessResponse(jobsResponse) && jobsResponse.data) {
         expect(jobsResponse.data).toHaveLength(2);
-        expect(jobsResponse.data[0].status).toBe('active');
+        expect(jobsResponse.data[0]!.status).toBe('active');
       }
     });
   });
