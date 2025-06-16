@@ -97,7 +97,7 @@ export class ApiClient {
 
         // Add withCredentials for httpOnly cookie authentication
         config.withCredentials = true;
-        
+
         return config;
       },
       (error) => {
@@ -116,12 +116,12 @@ export class ApiClient {
       },
       async (error) => {
         this.status.failedRequests++;
-        
+
         // Handle authentication errors
         if (this.isAuthenticationError(error)) {
           return this.handleAuthenticationError(error);
         }
-        
+
         return Promise.reject(error);
       }
     );
@@ -138,7 +138,7 @@ export class ApiClient {
 
   private async handleAuthenticationError(error: any) {
     const originalRequest = error.config;
-    
+
     // Skip retry for public endpoints
     if (this.isPublicEndpoint(originalRequest.url)) {
       return Promise.reject(error);
@@ -163,10 +163,10 @@ export class ApiClient {
   private async attemptTokenRefresh(originalRequest: any, originalError: any) {
     try {
       this.isRefreshing = true;
-      
+
       // Use authService to check if we're still authenticated
       const authResult = await this.checkAuthentication();
-      
+
       if (authResult.isAuthenticated) {
         // Process queued requests
         this.processRefreshQueue(true);
@@ -368,6 +368,7 @@ export const apiClient = {
 
   // Utility methods
   getConfig: () => getApiClient().getConfig(),
+  updateConfig: (config: Partial<ApiClientConfig>) => getApiClient().updateConfig(config),
   getStatus: () => getApiClient().getStatus(),
   isOnline: () => getApiClient().isOnline(),
   resetStatus: () => getApiClient().resetStatus(),
