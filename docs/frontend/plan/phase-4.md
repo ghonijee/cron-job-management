@@ -1,13 +1,13 @@
 # Frontend Development Phase 4: Authentication System
 
 **Duration:** 3 days  
-**Goal:** Implement complete authentication flow with secure session management
+**Goal:** Implement complete authentication flow with JWT token management
 
 ## Task Breakdown
 
 ### 📋 Day 1: Core Authentication Infrastructure
 
-#### [ ] Task 1: Authentication Types & Interfaces
+#### [x] Task 1: Authentication Types & Interfaces
 
 **Priority:** High  
 **Description:** Define TypeScript interfaces and types for authentication data structures
@@ -40,23 +40,24 @@ Create TypeScript authentication types in src/types/auth/ following the Global R
 #### [ ] Task 2: Authentication Service Implementation
 
 **Priority:** High  
-**Description:** Create authentication service for API communication
+**Description:** Create authentication service with httpOnly cookie-based token storage
 
 **Implementation Steps:**
 
 1. Create `authService.ts` in `src/services/auth/`
 2. Implement login, logout, refresh token methods
-3. Add token storage and retrieval utilities
+3. Configure httpOnly cookie handling with backend
 4. Handle authentication API error responses
-5. Implement session validation logic
+5. Implement token validation logic
 
 **Unit Test Cases:**
 
-- Test successful login flow
+- Test successful login flow with cookie setting
 - Test login with invalid credentials
-- Test token refresh mechanism
-- Test logout functionality
+- Test token refresh mechanism via cookies
+- Test logout functionality with cookie clearing
 - Test error handling for network failures
+- Test cookie security attributes
 
 **LLM Execution Prompt:**
 
@@ -64,13 +65,54 @@ Create TypeScript authentication types in src/types/auth/ following the Global R
 Create authentication service in src/services/auth/authService.ts following Global Rules:
 - Use the API client from src/services/shared/
 - Implement login(credentials), logout(), refreshToken() methods
-- Add secure token storage (no localStorage in artifacts - use memory)
+- Configure httpOnly cookies for token storage (cookies set by backend)
+- Handle cookie-based authentication flow
+- Include withCredentials: true for cookie requests
 - Handle all authentication API responses
 - Include comprehensive error handling
 - Follow the unified API response format from Global Rules
+- No manual token storage - rely on httpOnly cookies from server
 ```
 
-#### [ ] Task 3: Custom useAuth Hook
+#### [ ] Task 3: API Client Authentication Interceptor
+
+**Priority:** High  
+**Description:** Implement JWT token injection and response handling in the API client
+
+**Implementation Steps:**
+
+1. Update the base API client to include request interceptors
+2. Implement automatic JWT token injection for authenticated requests
+3. Add response interceptor for handling 401/403 errors
+4. Implement automatic token refresh on token expiration
+5. Handle token refresh failures and redirect to login
+6. Add request retry logic after token refresh
+
+**Unit Test Cases:**
+
+- Test token injection in request headers
+- Test 401 response handling and token refresh
+- Test request retry after successful token refresh
+- Test logout redirect on refresh token failure
+- Test concurrent request handling during token refresh
+- Test API calls without authentication (login endpoint)
+
+**LLM Execution Prompt:**
+
+```
+Update the API client in src/services/shared/apiClient.ts to include JWT authentication following Global Rules:
+- Add request interceptor to inject Bearer token from auth state
+- Add response interceptor to handle 401/403 errors
+- Implement automatic token refresh on token expiration
+- Retry original request after successful token refresh
+- Handle concurrent requests during token refresh (queue mechanism)
+- Redirect to login on refresh token failure
+- Exclude authentication header for login/public endpoints
+- Use the authService for token refresh logic
+- Handle edge cases like network errors during refresh
+```
+
+#### [ ] Task 4: Custom useAuth Hook
 
 **Priority:** High  
 **Description:** Create custom React hook for authentication state management
@@ -79,9 +121,9 @@ Create authentication service in src/services/auth/authService.ts following Glob
 
 1. Create `useAuth.ts` in `src/hooks/auth/`
 2. Implement authentication state management with useState/useReducer
-3. Add login, logout, and session check methods
+3. Add login, logout, and token check methods
 4. Handle loading states and error states
-5. Implement automatic token refresh logic
+5. Integrate with token refresh from API client
 
 **Unit Test Cases:**
 
@@ -96,16 +138,17 @@ Create authentication service in src/services/auth/authService.ts following Glob
 ```
 Create useAuth custom hook in src/hooks/auth/useAuth.ts following Global Rules:
 - Use React hooks for state management (no localStorage)
-- Return { user, isAuthenticated, isLoading, error, login, logout, checkSession }
+- Return { user, isAuthenticated, isLoading, error, login, logout, checkAuth }
 - Handle authentication state transitions
-- Include automatic session validation
+- Include token validation check
 - Use the authService for API calls
 - Follow React hooks best practices from Global Rules
+- Handle token refresh events from API client
 ```
 
 ### 📋 Day 2: Authentication UI Components
 
-#### [ ] Task 4: Login Form Component
+#### [ ] Task 5: Login Form Component
 
 **Priority:** High  
 **Description:** Create login form with validation and user experience features
@@ -142,7 +185,7 @@ Create LoginForm component in src/components/auth/LoginForm/ following Global Ru
 - Use Tailwind CSS for styling
 ```
 
-#### [ ] Task 5: Login Page Implementation
+#### [ ] Task 6: Login Page Implementation
 
 **Priority:** High  
 **Description:** Create complete login page with layout and branding
@@ -178,7 +221,7 @@ Create LoginPage component in src/pages/auth/LoginPage.tsx following Global Rule
 - Ensure accessibility compliance
 ```
 
-#### [ ] Task 6: Protected Route Component
+#### [ ] Task 7: Protected Route Component
 
 **Priority:** High  
 **Description:** Create route protection wrapper for authenticated areas
@@ -186,7 +229,7 @@ Create LoginPage component in src/pages/auth/LoginPage.tsx following Global Rule
 **Implementation Steps:**
 
 1. Create `ProtectedRoute` component in `src/components/auth/`
-2. Implement authentication check logic
+2. Implement authentication check logic using token validation
 3. Add loading states during auth verification
 4. Handle redirect to login for unauthenticated users
 5. Support role-based access (future-proofing)
@@ -210,42 +253,7 @@ Create ProtectedRoute component in src/components/auth/ProtectedRoute.tsx follow
 - Accept children prop for protected content
 - Use React Router for navigation
 - Handle authentication state changes gracefully
-```
-
-### 📋 Day 3: Session Management & Integration
-
-#### [ ] Task 7: Session Management Implementation
-
-**Priority:** High  
-**Description:** Implement persistent session handling and automatic refresh
-
-**Implementation Steps:**
-
-1. Create session management utilities in `src/utils/auth/`
-2. Implement token expiration checking
-3. Add automatic token refresh logic
-4. Handle session timeout scenarios
-5. Implement secure session cleanup
-
-**Unit Test Cases:**
-
-- Test token expiration detection
-- Test automatic refresh trigger
-- Test session cleanup on logout
-- Test invalid token handling
-- Test refresh token expiration
-
-**LLM Execution Prompt:**
-
-```
-Create session management utilities in src/utils/auth/sessionManager.ts following Global Rules:
-- Implement token expiration checking
-- Add automatic refresh before token expires
-- Handle refresh token rotation
-- Include session cleanup utilities
-- Use setTimeout for refresh scheduling
-- Handle edge cases (network errors, invalid tokens)
-- No localStorage usage - keep in memory only
+- Use token validation instead of session checks
 ```
 
 #### [ ] Task 8: Authentication Context Provider
@@ -277,10 +285,13 @@ Create AuthContext in src/hooks/auth/AuthContext.tsx following Global Rules:
 - Provide AuthProvider component
 - Export useAuthContext hook for consuming
 - Initialize authentication on app start
-- Handle session restoration on page refresh
+- Handle token restoration on page refresh
 - Keep context simple and focused
 - Integrate with useAuth hook
+- Handle automatic logout on token expiration
 ```
+
+### 📋 Day 3: Integration & Polish
 
 #### [ ] Task 9: Route Configuration & Navigation Setup
 
@@ -314,25 +325,26 @@ Update route configuration in src/App.tsx following Global Rules:
 - Preserve deep links during authentication flow
 - Add 404 handling for invalid routes
 - Use React Router v6 best practices
+- Integrate AuthProvider at the app root level
 ```
 
-#### [ ] Task 10: Logout Functionality & Session Cleanup
+#### [ ] Task 10: Logout Functionality & Token Cleanup
 
 **Priority:** Medium  
-**Description:** Implement secure logout with complete session cleanup
+**Description:** Implement secure logout with complete token cleanup
 
 **Implementation Steps:**
 
-1. Add logout button to main layout
+1. Add logout button to main layout header
 2. Implement secure logout process
-3. Clear all authentication data
+3. Clear all authentication tokens
 4. Redirect to login page
 5. Add logout confirmation if needed
 
 **Unit Test Cases:**
 
 - Test logout button functionality
-- Test session data cleanup
+- Test token cleanup
 - Test redirect after logout
 - Test logout from multiple tabs
 - Test logout API call
@@ -342,12 +354,13 @@ Update route configuration in src/App.tsx following Global Rules:
 ```
 Implement logout functionality following Global Rules:
 - Add logout button to main layout header
-- Clear all authentication state on logout
+- Clear all authentication tokens on logout
 - Call logout API endpoint
 - Redirect to login page after logout
 - Handle logout errors gracefully
-- Clear any cached data related to user session
+- Clear any cached data related to user
 - Update navigation state after logout
+- Add user dropdown menu with logout option
 ```
 
 #### [ ] Task 11: Error Handling & User Feedback
@@ -367,7 +380,7 @@ Implement logout functionality following Global Rules:
 
 - Test invalid credential errors
 - Test network error handling
-- Test session timeout errors
+- Test token expiration errors
 - Test error message display
 - Test retry mechanism
 
@@ -382,9 +395,46 @@ Implement authentication error handling following Global Rules:
 - Add retry logic for temporary failures
 - Show appropriate error states in UI components
 - Follow consistent error handling patterns
+- Use shared notification components
 ```
 
-#### [ ] Task 12: Authentication Integration Testing
+#### [ ] Task 12: Token Persistence & App Initialization
+
+**Priority:** Medium  
+**Description:** Implement authentication state restoration using httpOnly cookies
+
+**Implementation Steps:**
+
+1. Add authentication check endpoint call to AuthContext
+2. Implement silent authentication verification on app start
+3. Handle expired/invalid cookie scenarios
+4. Add loading states during initialization
+5. Gracefully handle authentication failures
+
+**Unit Test Cases:**
+
+- Test authentication restoration on page refresh via cookie validation
+- Test expired cookie handling
+- Test invalid cookie cleanup
+- Test loading states during initialization
+- Test fallback to login when validation fails
+
+**LLM Execution Prompt:**
+
+```
+Implement token persistence and app initialization following Global Rules:
+- Add authentication check to AuthProvider initialization
+- Call /auth/me or similar endpoint to verify httpOnly cookies
+- Include withCredentials: true for cookie-based requests
+- Handle valid cookie response by setting user state
+- Handle expired/invalid cookies gracefully (redirect to login)
+- Show loading spinner during authentication check
+- No manual token storage - rely on httpOnly cookies
+- Handle edge cases like network connectivity issues
+- Use silent API call to validate existing authentication
+```
+
+#### [ ] Task 13: Authentication Integration Testing
 
 **Priority:** Medium  
 **Description:** Create comprehensive integration tests for complete auth flow
@@ -394,15 +444,15 @@ Implement authentication error handling following Global Rules:
 1. Set up authentication test utilities
 2. Create integration tests for login flow
 3. Test protected route functionality
-4. Test session management scenarios
+4. Test token management scenarios
 5. Test error scenarios and edge cases
 
 **Unit Test Cases:**
 
 - Test complete login to dashboard flow
-- Test session persistence across page refresh
+- Test token persistence across page refresh
 - Test automatic logout on token expiration
-- Test concurrent session handling
+- Test concurrent token refresh handling
 - Test authentication with API integration
 
 **LLM Execution Prompt:**
@@ -413,23 +463,29 @@ Create authentication integration tests following Global Rules:
 - Test complete user authentication journey
 - Mock API responses for different scenarios
 - Test protected route navigation
-- Test session management edge cases
+- Test token management edge cases
 - Use React Testing Library best practices
 - Cover happy path and error scenarios
+- Test accessibility of auth components
+- Test responsive behavior of login forms
 ```
 
 ## 🎯 Success Criteria
 
 - [ ] Users can log in with email/password
 - [ ] Invalid credentials show appropriate errors
-- [ ] Login session persists across browser sessions
+- [ ] Login persists across browser sessions via token restoration
 - [ ] Protected routes are properly guarded
-- [ ] Automatic logout on session expiration
+- [ ] Automatic logout on token expiration
 - [ ] Remember me functionality works correctly
+- [ ] JWT tokens are automatically injected into API requests
+- [ ] Token refresh happens seamlessly in the background
 - [ ] All authentication flows are accessible (WCAG 2.1 AA)
 - [ ] Authentication state is consistent across the app
 - [ ] Error handling provides clear user feedback
 - [ ] Integration tests cover critical authentication paths
+- [ ] Token restoration works on page refresh
+- [ ] Concurrent API requests are handled properly during token refresh
 
 ## 🔗 Dependencies
 
@@ -440,8 +496,36 @@ Create authentication integration tests following Global Rules:
 
 ## 📊 Completion Metrics
 
-- All 12 tasks completed with unit tests
+- All 13 tasks completed with unit tests
 - Authentication flow tested end-to-end
 - Security requirements validated
 - Performance targets met (<2s authentication response)
 - Accessibility compliance verified
+- Token refresh mechanism working seamlessly
+- Token persistence functioning correctly
+
+## 🔄 Updated Task Dependencies
+
+1. **Task 1** → Independent
+2. **Task 2** → Depends on Task 1
+3. **Task 3** → Depends on Task 2
+4. **Task 4** → Depends on Task 3
+5. **Task 5** → Depends on Task 4
+6. **Task 6** → Depends on Task 5
+7. **Task 7** → Depends on Task 4
+8. **Task 8** → Depends on Task 4
+9. **Task 9** → Depends on Tasks 6, 7, 8
+10. **Task 10** → Depends on Task 8
+11. **Task 11** → Depends on Task 4
+12. **Task 12** → Depends on Task 8
+13. **Task 13** → Depends on Tasks 9, 10, 11, 12
+
+## ✅ Removed Complexity
+
+- **No Session Management**: Simplified to pure token-based authentication
+- **No Session Timeouts**: Only token expiration handling
+- **No Idle Detection**: Removed idle user monitoring
+- **No Session Validation**: Only token validity checks
+- **Simpler State**: Authentication state based purely on token presence/validity
+
+This streamlined approach focuses solely on JWT token management while still providing a complete, secure authentication system. The token refresh mechanism in the API client will handle most of the "session-like" behavior automatically.

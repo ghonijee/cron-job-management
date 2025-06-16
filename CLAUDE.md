@@ -23,3 +23,7 @@ See @docs/global_requirement.md and @docs/PRD.md for project requirements and do
 # Backend Project Documentation & Guideline
 
 - @docs/backend/backend_guideline.md
+
+# Global Rules
+
+- Always check for existing code before creating new implementations. Reuse and extend what already exists. Search for similar functionality, then evaluate the existing code for reuse or extended before creating new code. Create new code only when there is no existing solution.
