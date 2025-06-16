@@ -10,6 +10,7 @@ export interface ApiClientConfig {
   headers: Record<string, string>;
   retryAttempts: number;
   enableLogging: boolean;
+  onAuthenticationFailed?: () => void;
 }
 
 export interface ApiRequestConfig extends Omit<AxiosRequestConfig, 'url'> {
@@ -56,6 +57,15 @@ export interface ClientStatus {
   lastRequestTime?: number;
   totalRequests: number;
   failedRequests: number;
+}
+
+// ==========================================
+// Authentication Types
+// ==========================================
+
+export interface RefreshQueueItem {
+  resolve: (value: any) => void;
+  reject: (reason: any) => void;
 }
 
 // ==========================================

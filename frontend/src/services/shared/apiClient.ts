@@ -7,6 +7,7 @@ import type {
   RequestMetadata,
   ClientStatus,
   HttpMethod,
+  RefreshQueueItem,
 } from './types';
 
 // ==========================================
@@ -17,6 +18,8 @@ export class ApiClient {
   private axiosInstance: AxiosInstance;
   private config: ApiClientConfig;
   private status: ClientStatus;
+  private isRefreshing = false;
+  private refreshQueue: RefreshQueueItem[] = [];
 
   constructor(config?: Partial<ApiClientConfig>) {
     // Initialize status tracking
@@ -41,6 +44,7 @@ export class ApiClient {
 
     this.validateConfig();
     this.axiosInstance = this.createAxiosInstance();
+    this.setupInterceptors();
   }
 
   // ==========================================
@@ -72,6 +76,152 @@ export class ApiClient {
       headers: this.config.headers,
       validateStatus: (status) => status < 500, // Don't throw for client errors (4xx)
     });
+  }
+
+  // ==========================================
+  // Authentication Interceptors
+  // ==========================================
+
+  private setupInterceptors(): void {
+    this.setupRequestInterceptor();
+    this.setupResponseInterceptor();
+  }
+
+  private setupRequestInterceptor(): void {
+    this.axiosInstance.interceptors.request.use(
+      (config) => {
+        // Skip authentication for public endpoints
+        if (this.isPublicEndpoint(config.url)) {
+          return config;
+        }
+
+        // Add withCredentials for httpOnly cookie authentication
+        config.withCredentials = true;
+        
+        return config;
+      },
+      (error) => {
+        return Promise.reject(error);
+      }
+    );
+  }
+
+  private setupResponseInterceptor(): void {
+    this.axiosInstance.interceptors.response.use(
+      (response) => {
+        // Update success statistics
+        this.status.totalRequests++;
+        this.status.lastRequestTime = Date.now();
+        return response;
+      },
+      async (error) => {
+        this.status.failedRequests++;
+        
+        // Handle authentication errors
+        if (this.isAuthenticationError(error)) {
+          return this.handleAuthenticationError(error);
+        }
+        
+        return Promise.reject(error);
+      }
+    );
+  }
+
+  private isPublicEndpoint(url?: string): boolean {
+    const publicEndpoints = ['/auth/login', '/auth/verify-token'];
+    return publicEndpoints.some(endpoint => url?.includes(endpoint));
+  }
+
+  private isAuthenticationError(error: any): boolean {
+    return error.response?.status === 401 || error.response?.status === 403;
+  }
+
+  private async handleAuthenticationError(error: any) {
+    const originalRequest = error.config;
+    
+    // Skip retry for public endpoints
+    if (this.isPublicEndpoint(originalRequest.url)) {
+      return Promise.reject(error);
+    }
+
+    // Mark request as retried to prevent infinite loops
+    if (originalRequest._retry) {
+      this.onAuthenticationFailed();
+      return Promise.reject(error);
+    }
+    originalRequest._retry = true;
+
+    // If currently refreshing, queue this request
+    if (this.isRefreshing) {
+      return this.queueFailedRequest(originalRequest);
+    }
+
+    // Attempt token refresh
+    return this.attemptTokenRefresh(originalRequest, error);
+  }
+
+  private async attemptTokenRefresh(originalRequest: any, originalError: any) {
+    try {
+      this.isRefreshing = true;
+      
+      // Use authService to check if we're still authenticated
+      const authResult = await this.checkAuthentication();
+      
+      if (authResult.isAuthenticated) {
+        // Process queued requests
+        this.processRefreshQueue(true);
+        // Retry original request
+        return this.axiosInstance(originalRequest);
+      } else {
+        // Authentication failed
+        this.processRefreshQueue(false);
+        this.onAuthenticationFailed();
+        return Promise.reject(originalError);
+      }
+    } catch (refreshError) {
+      this.processRefreshQueue(false);
+      this.onAuthenticationFailed();
+      return Promise.reject(originalError);
+    } finally {
+      this.isRefreshing = false;
+    }
+  }
+
+  private queueFailedRequest(originalRequest: any): Promise<any> {
+    return new Promise((resolve, reject) => {
+      this.refreshQueue.push({ resolve, reject });
+    }).then(() => {
+      // Retry the original request after refresh completes
+      return this.axiosInstance(originalRequest);
+    });
+  }
+
+  private processRefreshQueue(success: boolean): void {
+    this.refreshQueue.forEach(({ resolve, reject }) => {
+      if (success) {
+        resolve(true);
+      } else {
+        reject(new Error('Token refresh failed'));
+      }
+    });
+    this.refreshQueue = [];
+  }
+
+  private async checkAuthentication(): Promise<{ isAuthenticated: boolean }> {
+    try {
+      // Import authHelpers dynamically to avoid circular dependency
+      const { authHelpers } = await import('@/services/auth/authService');
+      return await authHelpers.checkAuthentication();
+    } catch (error) {
+      return { isAuthenticated: false };
+    }
+  }
+
+  private onAuthenticationFailed(): void {
+    // Trigger logout and redirect - this will be handled by auth context
+    if (this.config.onAuthenticationFailed) {
+      this.config.onAuthenticationFailed();
+    }
   }
 
   // ==========================================
