@@ -1,0 +1,330 @@
+{
+  "project": {
+    "name": "Cron Jobs Management System",
+    "version": "1.0.0",
+    "description": "Web application for managing scheduled HTTP endpoint calls through cron jobs",
+    "tech_stack": {
+      "frontend": ["React", "TypeScript", "TanStack Start", "TailwindCSS", "TanStack Query"],
+      "backend": ["NestJS", "TypeScript", "TypeORM", "MySQL", "JWT"]
+    }
+  },
+  "phases": [
+    {
+      "phase_id": "PHASE_01",
+      "title": "Project Foundation & Setup",
+      "description": "Initialize project structure, configure development environment, and setup basic infrastructure",
+      "priority": "High",
+      "status": "todo",
+      "estimated_duration": "5-7 days",
+      "context": {
+        "overview": "Establish the foundational architecture for both frontend and backend applications",
+        "key_deliverables": ["Working development environment", "Project structure with proper organization", "Basic CI/CD pipeline", "Docker development setup"]
+      },
+      "dependencies": [],
+      "tasks": [
+        {
+          "task_id": "T-001",
+          "title": "Backend Project Initialization", 
+          "description": "Create NestJS project with TypeScript, configure TypeORM with MySQL, setup basic project structure",
+          "status": "todo",
+          "dependencies": [],
+          "instructions": {
+            "steps": [
+              "Initialize NestJS project with CLI: npm i -g @nestjs/cli && nest new backend",
+              "Configure TypeScript with strict mode in tsconfig.json",
+              "Install TypeORM and MySQL: npm install @nestjs/typeorm typeorm mysql2",
+              "Create environment configuration module using @nestjs/config",
+              "Setup basic folder structure following NestJS conventions"
+            ],
+            "files_to_create": ["backend/src/app.module.ts", "backend/src/config/database.config.ts", "backend/src/config/app.config.ts", "backend/.env.example", "backend/docker-compose.dev.yml", "backend/package.json"],
+            "files_to_update": []
+          }
+        },
+        {
+          "task_id": "T-002",
+          "title": "Frontend Project Initialization",
+          "description": "Create React project with TanStack Start, configure TypeScript, setup TailwindCSS and project structure", 
+          "status": "todo",
+          "dependencies": [],
+          "instructions": {
+            "steps": [
+              "Initialize React project with TanStack Start: npx create-tanstack-start frontend",
+              "Configure TypeScript with strict mode and path mapping",
+              "Install and setup TailwindCSS: npm install -D tailwindcss postcss autoprefixer",
+              "Configure TanStack Query for data fetching",
+              "Create basic folder structure with components, hooks, lib, types directories"
+            ],
+            "files_to_create": ["frontend/src/main.tsx", "frontend/src/app.tsx", "frontend/tailwind.config.js", "frontend/src/lib/api.ts", "frontend/src/types/index.ts", "frontend/.env.example", "frontend/package.json"],
+            "files_to_update": []
+          }
+        },
+        {
+          "task_id": "T-003",
+          "title": "Database Schema & Migrations",
+          "description": "Design and implement database schema for users, categories, cron jobs, and execution history",
+          "status": "todo", 
+          "dependencies": ["T-001"],
+          "instructions": {
+            "steps": [
+              "Create TypeORM entities for User, Category, CronJob, ExecutionHistory",
+              "Setup database migrations with proper indexing strategies",
+              "Create seed data for development environment",
+              "Configure database relationships and foreign key constraints",
+              "Add validation decorators using class-validator"
+            ],
+            "files_to_create": ["backend/src/entities/user.entity.ts", "backend/src/entities/category.entity.ts", "backend/src/entities/cron-job.entity.ts", "backend/src/entities/execution-history.entity.ts", "backend/src/database/migrations/001-create-tables.ts", "backend/src/database/seeds/dev-data.seed.ts"],
+            "files_to_update": ["backend/src/app.module.ts"]
+          }
+        },
+        {
+          "task_id": "T-004",
+          "title": "Development Environment Setup",
+          "description": "Configure Docker development environment, CI/CD pipeline, and development tools",
+          "status": "todo",
+          "dependencies": ["T-001", "T-002"],
+          "instructions": {
+            "steps": [
+              "Create Docker compose file with MySQL 8.0 and Redis services",
+              "Setup development scripts in package.json for both frontend and backend",
+              "Configure ESLint and Prettier with consistent rules across projects",
+              "Setup basic GitHub Actions workflow for CI/CD",
+              "Create comprehensive development documentation"
+            ],
+            "files_to_create": ["docker-compose.dev.yml", ".github/workflows/ci.yml", "README.md", "docs/development-setup.md", ".eslintrc.js", ".prettierrc"],
+            "files_to_update": []
+          }
+        }
+      ]
+    },
+    {
+      "phase_id": "PHASE_02",
+      "title": "Authentication System",
+      "description": "Implement complete authentication system with JWT tokens, user management, and security features",
+      "priority": "High",
+      "status": "todo",
+      "estimated_duration": "8-10 days",
+      "context": {
+        "overview": "Build secure authentication system supporting login, token refresh, and session management",
+        "key_deliverables": ["JWT-based authentication with refresh tokens", "Secure login/logout functionality", "Automatic token refresh mechanism", "Protected routes and API endpoints"]
+      },
+      "dependencies": ["PHASE_01"],
+      "tasks": [
+        {
+          "task_id": "T-005",
+          "title": "Backend Authentication Module",
+          "description": "Create NestJS authentication module with JWT strategy, guards, and security middleware",
+          "status": "todo",
+          "dependencies": ["T-003"],
+          "instructions": {
+            "steps": [
+              "Install authentication dependencies: @nestjs/passport @nestjs/jwt passport passport-jwt bcryptjs",
+              "Create authentication module with JWT strategy implementation",
+              "Implement secure login endpoint with password validation",
+              "Create refresh token mechanism with secure storage",
+              "Setup JWT guards and custom decorators for protected routes"
+            ],
+            "files_to_create": ["backend/src/auth/auth.module.ts", "backend/src/auth/auth.controller.ts", "backend/src/auth/auth.service.ts", "backend/src/auth/strategies/jwt.strategy.ts", "backend/src/auth/guards/jwt-auth.guard.ts", "backend/src/auth/dto/login.dto.ts", "backend/src/auth/dto/auth-response.dto.ts"],
+            "files_to_update": ["backend/src/app.module.ts"]
+          }
+        },
+        {
+          "task_id": "T-006",
+          "title": "Frontend Authentication Context",
+          "description": "Create React context for authentication state management and API integration",
+          "status": "todo",
+          "dependencies": ["T-002"],
+          "instructions": {
+            "steps": [
+              "Create authentication context with TypeScript interfaces",
+              "Implement secure token storage using localStorage with fallback",
+              "Create custom hooks for login, logout, and authentication state",
+              "Setup Axios interceptors for automatic token attachment",
+              "Implement automatic token refresh with retry logic"
+            ],
+            "files_to_create": ["frontend/src/contexts/auth-context.tsx", "frontend/src/hooks/use-auth.ts", "frontend/src/lib/auth.ts", "frontend/src/types/auth.types.ts"],
+            "files_to_update": ["frontend/src/app.tsx", "frontend/src/lib/api.ts"]
+          }
+        },
+        {
+          "task_id": "T-007",
+          "title": "Login Page & Components",
+          "description": "Build login form component with validation, error handling, and responsive design",
+          "status": "todo",
+          "dependencies": ["T-006"],
+          "instructions": {
+            "steps": [
+              "Create login form using React Hook Form with TypeScript",
+              "Implement form validation using Zod schema validation",
+              "Design responsive login page with TailwindCSS",
+              "Add comprehensive loading states and error handling",
+              "Implement remember me functionality with persistent storage"
+            ],
+            "files_to_create": ["frontend/src/pages/login.tsx", "frontend/src/components/forms/login-form.tsx", "frontend/src/components/ui/form-field.tsx", "frontend/src/lib/validation.ts"],
+            "files_to_update": ["frontend/src/app.tsx"]
+          }
+        },
+        {
+          "task_id": "T-008",
+          "title": "Protected Routes & Navigation",
+          "description": "Implement route protection, navigation layout, and user session management",
+          "status": "todo",
+          "dependencies": ["T-007"],
+          "instructions": {
+            "steps": [
+              "Create protected route wrapper component with authentication checks",
+              "Build responsive navigation layout with collapsible sidebar",
+              "Implement secure logout functionality with token cleanup",
+              "Add user profile display with avatar and user information",
+              "Create route guards for different authentication states"
+            ],
+            "files_to_create": ["frontend/src/components/layout/authenticated-layout.tsx", "frontend/src/components/layout/navigation.tsx", "frontend/src/components/layout/sidebar.tsx", "frontend/src/components/auth/protected-route.tsx"],
+            "files_to_update": ["frontend/src/app.tsx"]
+          }
+        }
+      ]
+    },
+    {
+      "phase_id": "PHASE_03",
+      "title": "Category Management System",
+      "description": "Build complete CRUD system for job categories with search, filtering, and analytics",
+      "priority": "Medium",
+      "status": "todo",
+      "estimated_duration": "6-8 days",
+      "context": {
+        "overview": "Implement category management to organize cron jobs with full CRUD operations",
+        "key_deliverables": ["Complete category CRUD operations", "Advanced search and filtering functionality", "Category analytics and statistics", "Bulk operations support"]
+      },
+      "dependencies": ["PHASE_02"],
+      "tasks": [
+        {
+          "task_id": "T-009",
+          "title": "Backend Category Module",
+          "description": "Create NestJS module for category management with full CRUD operations and validation",
+          "status": "todo",
+          "dependencies": ["T-005"],
+          "instructions": {
+            "steps": [
+              "Create category module with controller, service, and repository pattern",
+              "Implement RESTful CRUD endpoints with proper HTTP status codes",
+              "Add comprehensive input validation and sanitization",
+              "Create advanced search and filtering with query builders",
+              "Setup category analytics service with aggregation queries"
+            ],
+            "files_to_create": ["backend/src/categories/categories.module.ts", "backend/src/categories/categories.controller.ts", "backend/src/categories/categories.service.ts", "backend/src/categories/dto/create-category.dto.ts", "backend/src/categories/dto/update-category.dto.ts", "backend/src/categories/dto/category-filter.dto.ts"],
+            "files_to_update": ["backend/src/app.module.ts"]
+          }
+        },
+        {
+          "task_id": "T-010",
+          "title": "Category Data Layer",
+          "description": "Implement React Query hooks and API integration for category management",
+          "status": "todo",
+          "dependencies": ["T-009"],
+          "instructions": {
+            "steps": [
+              "Create TanStack Query hooks for categories with proper typing",
+              "Implement optimistic updates for CRUD operations",
+              "Setup intelligent cache invalidation strategies",
+              "Create category API service functions with error handling",
+              "Add retry logic and network failure recovery"
+            ],
+            "files_to_create": ["frontend/src/api/categories.api.ts", "frontend/src/hooks/use-categories.ts", "frontend/src/types/category.types.ts"],
+            "files_to_update": ["frontend/src/lib/api.ts"]
+          }
+        },
+        {
+          "task_id": "T-011",
+          "title": "Category List & Management UI",
+          "description": "Build category listing page with search, filters, and management actions",
+          "status": "todo",
+          "dependencies": ["T-010"],
+          "instructions": {
+            "steps": [
+              "Create category list page with responsive data table",
+              "Implement real-time search with debouncing",
+              "Add multi-criteria filtering with saved filter states",
+              "Create pagination with configurable page sizes",
+              "Build category status toggle with confirmation"
+            ],
+            "files_to_create": ["frontend/src/pages/categories/index.tsx", "frontend/src/components/categories/category-list.tsx", "frontend/src/components/categories/category-filters.tsx", "frontend/src/components/ui/data-table.tsx", "frontend/src/components/ui/search-input.tsx"],
+            "files_to_update": ["frontend/src/components/layout/navigation.tsx"]
+          }
+        },
+        {
+          "task_id": "T-012",
+          "title": "Category Form Components",
+          "description": "Create category creation and editing forms with validation and user experience enhancements",
+          "status": "todo",
+          "dependencies": ["T-011"],
+          "instructions": {
+            "steps": [
+              "Build category form component with comprehensive validation",
+              "Create custom color picker component with preset colors",
+              "Implement form submission with optimistic updates",
+              "Add auto-save functionality for better UX",
+              "Create live category preview component"
+            ],
+            "files_to_create": ["frontend/src/components/categories/category-form.tsx", "frontend/src/components/categories/category-modal.tsx", "frontend/src/components/ui/color-picker.tsx", "frontend/src/components/ui/modal.tsx"],
+            "files_to_update": ["frontend/src/pages/categories/index.tsx"]
+          }
+        }
+      ]
+    }
+  ],
+  "technical_requirements": {
+    "code_quality": {
+      "test_coverage_minimum": "80%",
+      "linting_compliance": "strict",
+      "documentation_required": true,
+      "type_safety": "strict TypeScript"
+    },
+    "performance_targets": {
+      "api_response_time": "<500ms",
+      "page_load_time": "<3s",
+      "job_execution_latency": "<5s",
+      "database_query_optimization": "required"
+    },
+    "security_requirements": {
+      "authentication": "JWT with refresh tokens",
+      "authorization": "role-based access control",
+      "data_encryption": "at rest and in transit",
+      "vulnerability_scanning": "automated"
+    },
+    "scalability_requirements": {
+      "concurrent_jobs": "100+",
+      "database_size": "1M+ records",
+      "user_sessions": "1000+",
+      "api_requests": "10000+ per hour"
+    }
+  },
+  "environment_setup": {
+    "development": {
+      "node_version": "18+",
+      "database": "MySQL 8.0+ or Docker",
+      "cache": "Redis",
+      "tools": ["Git", "Docker", "VS Code"]
+    },
+    "production": {
+      "container_platform": "Docker/Kubernetes",
+      "database": "MySQL 8.0 with clustering",
+      "cache": "Redis Cluster",
+      "monitoring": "Prometheus/Grafana"
+    }
+  },
+  "success_criteria": {
+    "functional": [
+      "All CRUD operations working correctly",
+      "Job scheduling and execution functioning",
+      "Authentication and authorization implemented",
+      "Real-time monitoring operational",
+      "Data persistence and integrity maintained"
+    ],
+    "non_functional": [
+      "80%+ test coverage achieved",
+      "Performance targets met",
+      "Security requirements satisfied",
+      "Documentation complete",
+      "Production deployment successful"
+    ]
+  }
+}
