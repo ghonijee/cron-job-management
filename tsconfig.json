@@ -18,6 +18,7 @@
     "strictFunctionTypes": true,
     "noImplicitReturns": true,
     "forceConsistentCasingInFileNames": true,
+    "strictPropertyInitialization":false,
     "paths": {
       "@/*": ["src/*"],
       "@config/*": ["src/config/*"],

@@ -25,5 +25,11 @@ export default tseslint.config(
       },
     },
   },
-  eslintNestJs.configs.flatRecommended
+  eslintNestJs.configs.flatRecommended,
+  {
+    rules: {
+      "@typescript-eslint/no-inferrable-types": "off",
+      "@typescript-eslint/no-explicit-any": "off"
+    }
+  }
 );

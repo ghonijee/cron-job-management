@@ -18,14 +18,25 @@ export class User {
   @IsEmail()
   email!: string;
 
-  @Column()
+  @Column({ select: false })
   @IsString()
   @MinLength(8)
   password!: string;
 
   @Column()
   @IsString()
-  name!: string;
+  firstName!: string;
+
+  @Column()
+  @IsString()
+  lastName!: string;
+
+  @Column({ default: 'user' })
+  @IsString()
+  role!: string;
+
+  @Column({ nullable: true, select: false })
+  refreshToken?: string;
 
   @Column({ default: true })
   isActive!: boolean;

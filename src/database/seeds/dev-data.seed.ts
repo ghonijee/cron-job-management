@@ -14,7 +14,9 @@ export async function seedDevData(dataSource: DataSource) {
   const testUser = userRepository.create({
     email: 'test@example.com',
     password: hashedPassword,
-    name: 'Test User',
+    firstName: 'Test',
+    lastName: 'User',
+    role: 'admin',
   });
   await userRepository.save(testUser);
 
