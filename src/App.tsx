@@ -2,6 +2,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 import { QueryClientProvider } from '@tanstack/react-query'
 import { AuthProvider } from './contexts/auth-context'
 import { queryClient } from './lib/query-client'
+import { LoginPage } from './pages/login'
 
 function App() {
   return (
@@ -45,16 +46,6 @@ function HomePage() {
   )
 }
 
-function LoginPage() {
-  return (
-    <div className="flex items-center justify-center min-h-screen">
-      <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 max-w-md w-full">
-        <h2 className="text-2xl font-bold text-center mb-6">Sign In</h2>
-        <p className="text-center text-gray-600">Login page coming soon...</p>
-      </div>
-    </div>
-  )
-}
 
 function DashboardPage() {
   return (
