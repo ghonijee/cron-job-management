@@ -1,16 +1,23 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
+import { QueryClientProvider } from '@tanstack/react-query'
+import { AuthProvider } from './contexts/auth-context'
+import { queryClient } from './lib/query-client'
 
 function App() {
   return (
-    <Router>
-      <div className="min-h-screen bg-gray-50">
-        <Routes>
-          <Route path="/" element={<HomePage />} />
-          <Route path="/login" element={<LoginPage />} />
-          <Route path="/dashboard" element={<DashboardPage />} />
-        </Routes>
-      </div>
-    </Router>
+    <QueryClientProvider client={queryClient}>
+      <AuthProvider>
+        <Router>
+          <div className="min-h-screen bg-gray-50">
+            <Routes>
+              <Route path="/" element={<HomePage />} />
+              <Route path="/login" element={<LoginPage />} />
+              <Route path="/dashboard" element={<DashboardPage />} />
+            </Routes>
+          </div>
+        </Router>
+      </AuthProvider>
+    </QueryClientProvider>
   )
 }
 
