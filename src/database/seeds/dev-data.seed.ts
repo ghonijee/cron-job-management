@@ -12,7 +12,7 @@ export async function seedDevData(dataSource: DataSource) {
   // Create test user
   const hashedPassword = await bcrypt.hash('password123', 10);
   const testUser = userRepository.create({
-    email: 'test@example.com',
+    email: 'admin@admin.com',
     password: hashedPassword,
     firstName: 'Test',
     lastName: 'User',
