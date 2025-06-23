@@ -5,7 +5,7 @@ import { Public } from './auth/decorators/public.decorator';
 @ApiTags('Health Check')
 @Controller()
 export class AppController {
-  constructor() { }
+  constructor() {}
 
   @Public()
   @Get()
@@ -13,6 +13,6 @@ export class AppController {
   getHello() {
     return {
       message: 'API is running',
-    }
+    };
   }
 }

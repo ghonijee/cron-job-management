@@ -4,6 +4,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { APP_GUARD } from '@nestjs/core';
 import { AppController } from './app.controller';
 import { AuthModule } from './auth/auth.module';
+import { CategoriesModule } from './categories/categories.module';
 import { JwtAuthGuard } from './auth/guards/jwt-auth.guard';
 import databaseConfig from './config/database.config';
 import appConfig from './config/app.config';
@@ -27,6 +28,7 @@ import { ExecutionHistory } from './entities/execution-history.entity';
     }),
     TypeOrmModule.forFeature([User, Category, CronJob, ExecutionHistory]),
     AuthModule,
+    CategoriesModule,
   ],
   controllers: [AppController],
   providers: [
@@ -36,4 +38,4 @@ import { ExecutionHistory } from './entities/execution-history.entity';
     },
   ],
 })
-export class AppModule { }
+export class AppModule {}

@@ -30,6 +30,9 @@ export class Category {
   @Column({ default: true })
   isActive!: boolean;
 
+  @Column({ nullable: false })
+  userId!: number;
+
   @CreateDateColumn()
   createdAt!: Date;
 
