@@ -1,0 +1,43 @@
+{
+  "name": "cron-job-management",
+  "version": "1.0.0",
+  "description": "A comprehensive cron jobs management system with NestJS backend and React frontend",
+  "private": true,
+  "workspaces": [
+    "backend",
+    "frontend"
+  ],
+  "scripts": {
+    "install:backend": "cd backend && npm install",
+    "install:frontend": "cd frontend && npm install",
+    "install:all": "npm run install:backend && npm run install:frontend",
+    "dev:backend": "cd backend && npm run start:dev",
+    "dev:frontend": "cd frontend && npm run dev",
+    "dev": "concurrently \"npm run dev:backend\" \"npm run dev:frontend\"",
+    "build:backend": "cd backend && npm run build",
+    "build:frontend": "cd frontend && npm run build",
+    "build": "npm run build:backend && npm run build:frontend",
+    "lint:backend": "cd backend && npm run lint",
+    "lint:frontend": "cd frontend && npm run lint",
+    "lint": "npm run lint:backend && npm run lint:frontend",
+    "test:backend": "cd backend && npm test",
+    "test:frontend": "cd frontend && npm test",
+    "test": "npm run test:backend && npm run test:frontend",
+    "docker:dev": "cd backend && npm run docker:dev",
+    "docker:down": "cd backend && npm run docker:down"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  },
+  "keywords": [
+    "cron",
+    "job-scheduler",
+    "nestjs",
+    "react",
+    "typescript",
+    "mysql",
+    "typeorm"
+  ],
+  "author": "Ahmad Yunus Afghoni",
+  "license": "MIT"
+}
