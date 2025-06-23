@@ -1,4 +1,6 @@
 import React, { createContext, useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { useQueryClient } from "@tanstack/react-query";
 import type {
   AuthContextType,
   User,
@@ -16,6 +18,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
 }) => {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const navigate = useNavigate();
+  const queryClient = useQueryClient();
 
   const login = async (credentials: LoginCredentials) => {
     const authResponse = await authApi.login(credentials);
@@ -26,9 +30,25 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     localStorage.setItem("user_data", JSON.stringify(authResponse.user));
   };
 
-  const logout = () => {
-    setUser(null);
-    tokenStorage.clearTokens();
+  const logout = async () => {
+    try {
+      // Clear user state
+      setUser(null);
+      
+      // Clear tokens from storage
+      tokenStorage.clearTokens();
+      
+      // Clear user data from localStorage
+      localStorage.removeItem("user_data");
+      
+      // Invalidate all queries
+      queryClient.clear();
+      
+      // Redirect to login
+      navigate('/login');
+    } catch (error) {
+      console.error('Logout failed:', error);
+    }
   };
 
   const refreshToken = async () => {
