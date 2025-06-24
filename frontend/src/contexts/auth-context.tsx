@@ -34,20 +34,20 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     try {
       // Clear user state
       setUser(null);
-      
+
       // Clear tokens from storage
       tokenStorage.clearTokens();
-      
+
       // Clear user data from localStorage
       localStorage.removeItem("user_data");
-      
+
       // Invalidate all queries
       queryClient.clear();
-      
+
       // Redirect to login
-      navigate('/login');
+      navigate("/login");
     } catch (error) {
-      console.error('Logout failed:', error);
+      console.error("Logout failed:", error);
     }
   };
 
@@ -75,6 +75,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
         } catch {
           tokenStorage.clearTokens();
         }
+      } else {
+        refreshToken();
       }
       setIsLoading(false);
     };
