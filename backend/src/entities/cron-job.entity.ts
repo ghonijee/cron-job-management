@@ -87,7 +87,10 @@ export class CronJob {
   @ManyToOne(() => Category, (category) => category.cronJobs, {
     nullable: true,
   })
-  category!: Category;
+  category?: Category;
+
+  @Column({ nullable: true })
+  categoryId?: number;
 
   @OneToMany(() => ExecutionHistory, (history) => history.cronJob)
   executionHistories!: ExecutionHistory[];

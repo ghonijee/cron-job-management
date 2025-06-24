@@ -110,9 +110,18 @@ export class CategoriesService {
   }
 
   async remove(id: number, userId: number) {
-    await this.findOne(id, userId);
+    const category = await this.findOne(id, userId);
+    
+    // Count associated jobs before deletion
+    const jobsCount = category.cronJobs?.length || 0;
+    
     await this.categoryRepository.delete(id);
-    return { message: 'Category deleted successfully' };
+    
+    return { 
+      message: 'Category deleted successfully',
+      affectedJobs: jobsCount,
+      note: jobsCount > 0 ? `${jobsCount} job(s) are now uncategorized` : undefined
+    };
   }
 
   async toggle(id: number, userId: number) {

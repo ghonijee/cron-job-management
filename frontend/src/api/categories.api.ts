@@ -28,8 +28,9 @@ export const categoriesApi = {
     return response.data;
   },
 
-  delete: async (id: string): Promise<void> => {
-    await apiClient.delete(`/categories/${id}`);
+  delete: async (id: string): Promise<{ message: string; affectedJobs: number; note?: string }> => {
+    const response = await apiClient.delete<{ message: string; affectedJobs: number; note?: string }>(`/categories/${id}`);
+    return response.data;
   },
 
   toggle: async (id: string): Promise<Category> => {

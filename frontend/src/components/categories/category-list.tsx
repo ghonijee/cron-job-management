@@ -1,11 +1,12 @@
 import { useState, useCallback } from "react";
+import toast from 'react-hot-toast';
 import { DataTable } from "../ui/data-table";
 import { SearchInput } from "../ui/search-input";
 import { CategoryFilters } from "./category-filters";
 import { CategoryModal } from "./category-modal";
 import { Pagination } from "../ui/pagination";
 import { CategoryListSkeleton } from "../ui/skeleton";
-import { useCategories, useToggleCategory } from "../../hooks/use-categories";
+import { useCategories, useToggleCategory, useDeleteCategory } from "../../hooks/use-categories";
 import type { Category, CategoryFilter } from "../../types";
 
 export function CategoryList() {
@@ -23,6 +24,7 @@ export function CategoryList() {
 
   const { data: categoriesData, isLoading, error } = useCategories(filters);
   const toggleCategory = useToggleCategory();
+  const deleteCategory = useDeleteCategory();
 
   // Memoized handlers to prevent unnecessary re-renders
   const handleSearch = useCallback((search: string) => {
@@ -56,6 +58,33 @@ export function CategoryList() {
       }
     }
   }, [toggleCategory]);
+
+  const handleDeleteCategory = useCallback(async (category: Category) => {
+    const jobsCount = category.cronJobsCount || 0;
+    
+    // Enhanced confirmation message
+    const confirmMessage = jobsCount > 0 
+      ? `Delete "${category.name}"? ${jobsCount} job(s) will become uncategorized.`
+      : `Delete "${category.name}"?`;
+    
+    const confirmed = window.confirm(confirmMessage);
+
+    if (confirmed) {
+      try {
+        const result = await deleteCategory.mutateAsync(category.id);
+        
+        // Show success message with job impact
+        if (result.affectedJobs > 0) {
+          toast.success(`${result.message} ${result.note}`);
+        } else {
+          toast.success(result.message);
+        }
+      } catch (error) {
+        toast.error('Failed to delete category');
+        console.error("Failed to delete category:", error);
+      }
+    }
+  }, [deleteCategory]);
 
   // Fixed pagination handler - no page reset
   const handlePageChange = useCallback((page: number) => {
@@ -172,6 +201,13 @@ export function CategoryList() {
             className="text-blue-600 hover:text-blue-800 font-medium text-sm"
           >
             Edit
+          </button>
+          <button
+            onClick={() => handleDeleteCategory(category)}
+            disabled={deleteCategory.isPending}
+            className="text-red-600 hover:text-red-800 font-medium text-sm disabled:opacity-50"
+          >
+            {deleteCategory.isPending ? 'Deleting...' : 'Delete'}
           </button>
         </div>
       ),

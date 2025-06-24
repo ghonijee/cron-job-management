@@ -1,0 +1,555 @@
+{
+  "project": {
+    "name": "Cron Jobs Management System",
+    "version": "1.0.0",
+    "description": "Web application for managing scheduled HTTP endpoint calls through cron jobs",
+    "tech_stack": {
+      "frontend": [
+        "React",
+        "TypeScript", 
+        "TanStack Start",
+        "TailwindCSS",
+        "TanStack Query"
+      ],
+      "backend": ["NestJS", "TypeScript", "TypeORM", "MySQL", "JWT"]
+    }
+  },
+  "feature": {
+    "feature_id": "F-003",
+    "epic_name": "EPIC 3: Cron Jobs Management", 
+    "business_value": "Core functionality for creating and managing scheduled tasks",
+    "priority": "High",
+    "complexity": "Complex",
+    "dependencies": ["F-001 Authentication", "F-002 Category Management"],
+    "estimated_duration": "12-15 days"
+  },
+  "phases": [
+    {
+      "phase_id": "F003_PHASE_01",
+      "title": "Backend Cron Jobs Foundation",
+      "description": "Create backend foundation for cron job management including entities, services, and core scheduling infrastructure",
+      "priority": "High",
+      "status": "todo",
+      "estimated_duration": "4-5 days",
+      "context": {
+        "overview": "Establish the backend infrastructure for cron job management with database entities and scheduling engine",
+        "key_deliverables": [
+          "CronJob entity with comprehensive field structure",
+          "Job scheduling service with node-cron integration",
+          "Job execution engine with retry logic",
+          "Database relationships and constraints"
+        ]
+      },
+      "dependencies": ["F-001", "F-002"],
+      "tasks": [
+        {
+          "task_id": "T-014",
+          "title": "CronJob Entity & Database Schema",
+          "description": "Create comprehensive CronJob entity with all required fields, relationships, and database optimizations",
+          "status": "todo",
+          "effort_points": 3,
+          "dependencies": ["T-003"],
+          "instructions": {
+            "steps": [
+              "Create CronJob entity extending base entity with all required fields",
+              "Define relationships with Category and ExecutionHistory entities",
+              "Add comprehensive validation decorators using class-validator",
+              "Create database indexes for performance optimization",
+              "Setup entity constraints and cascading rules"
+            ],
+            "files_to_create": [
+              "backend/src/entities/cron-job.entity.ts",
+              "backend/src/database/migrations/002-create-cronjob-table.ts"
+            ],
+            "files_to_update": [
+              "backend/src/entities/index.ts",
+              "backend/src/app.module.ts"
+            ],
+            "acceptance_criteria": [
+              "CronJob entity includes all fields: name, description, categoryId, cronPattern, status, url, method, headers, body, authType, authConfig, timeout, retryCount, retryDelay",
+              "Proper TypeORM relationships established with Category and ExecutionHistory",
+              "Database migration creates table with appropriate indexes",
+              "Entity validation decorators prevent invalid data entry"
+            ]
+          }
+        },
+        {
+          "task_id": "T-016",
+          "title": "Job Registry & Scheduler Service",
+          "description": "Implement job registration system using node-cron for managing active job schedules in memory",
+          "status": "todo", 
+          "effort_points": 5,
+          "dependencies": ["T-014"],
+          "instructions": {
+            "steps": [
+              "Install node-cron dependency: npm install node-cron @types/node-cron",
+              "Create JobRegistryService to manage in-memory job references",
+              "Implement JobSchedulerService for job lifecycle management",
+              "Create job registration/deregistration methods",
+              "Setup application bootstrap to load existing active jobs",
+              "Add proper error handling and logging for job operations"
+            ],
+            "files_to_create": [
+              "backend/src/jobs/services/job-registry.service.ts",
+              "backend/src/jobs/services/job-scheduler.service.ts",
+              "backend/src/jobs/interfaces/job-registry.interface.ts"
+            ],
+            "files_to_update": [
+              "backend/src/jobs/jobs.module.ts",
+              "backend/src/app.module.ts"
+            ],
+            "acceptance_criteria": [
+              "JobRegistryService maintains in-memory map of active scheduled tasks",
+              "JobSchedulerService handles job lifecycle events (create, update, delete, toggle)",
+              "Application loads and registers all active jobs on startup",
+              "Proper cleanup when jobs are deleted or deactivated",
+              "Comprehensive logging for job scheduling operations"
+            ]
+          }
+        },
+        {
+          "task_id": "T-017",
+          "title": "Job Execution Engine",
+          "description": "Build robust job execution engine with HTTP requests, retry logic, and execution tracking",
+          "status": "todo",
+          "effort_points": 8,
+          "dependencies": ["T-016"],
+          "instructions": {
+            "steps": [
+              "Create JobExecutorService for HTTP request execution",
+              "Implement comprehensive retry mechanism with exponential backoff",
+              "Add execution status tracking with database logging",
+              "Create authentication handling for different auth types",
+              "Setup request/response logging and error handling",
+              "Implement concurrent execution prevention per job",
+              "Add timeout handling and request cancellation"
+            ],
+            "files_to_create": [
+              "backend/src/jobs/services/job-executor.service.ts",
+              "backend/src/jobs/services/execution-logger.service.ts",
+              "backend/src/jobs/interfaces/execution-context.interface.ts",
+              "backend/src/jobs/dto/execution-result.dto.ts"
+            ],
+            "files_to_update": [
+              "backend/src/jobs/jobs.module.ts"
+            ],
+            "acceptance_criteria": [
+              "JobExecutorService executes HTTP requests with all configured parameters",
+              "Retry logic implements exponential backoff with configurable limits",
+              "Execution tracking creates detailed logs in ExecutionHistory",
+              "Authentication types (none, basic, bearer) properly handled",
+              "Concurrent execution prevention using database locks",
+              "Proper error handling and timeout management",
+              "Comprehensive request/response logging for debugging"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "phase_id": "F003_PHASE_02", 
+      "title": "Cron Jobs CRUD API",
+      "description": "Implement complete RESTful API for cron job management with validation, filtering, and business logic",
+      "priority": "High",
+      "status": "todo",
+      "estimated_duration": "3-4 days",
+      "context": {
+        "overview": "Create comprehensive REST API endpoints for cron job CRUD operations with advanced features",
+        "key_deliverables": [
+          "Complete CRUD API endpoints with proper HTTP methods",
+          "Advanced search and filtering capabilities",
+          "Cron pattern validation service",
+          "Manual job trigger functionality",
+          "Comprehensive input validation and error handling"
+        ]
+      },
+      "dependencies": ["F003_PHASE_01"],
+      "tasks": [
+        {
+          "task_id": "T-015",
+          "title": "Cron Jobs CRUD API Implementation",
+          "description": "Create comprehensive RESTful API endpoints for cron job management with full CRUD operations",
+          "status": "todo",
+          "effort_points": 6,
+          "dependencies": ["T-017"],
+          "instructions": {
+            "steps": [
+              "Create CronJobsController with all CRUD endpoints",
+              "Implement CronJobsService with business logic and validation",
+              "Create comprehensive DTOs for create, update, and filter operations",
+              "Add pagination, sorting, and filtering support",
+              "Implement soft delete functionality",
+              "Setup proper HTTP status codes and error responses",
+              "Add Swagger/OpenAPI documentation for all endpoints"
+            ],
+            "files_to_create": [
+              "backend/src/jobs/jobs.controller.ts", 
+              "backend/src/jobs/jobs.service.ts",
+              "backend/src/jobs/dto/create-job.dto.ts",
+              "backend/src/jobs/dto/update-job.dto.ts",
+              "backend/src/jobs/dto/job-filter.dto.ts",
+              "backend/src/jobs/dto/job-response.dto.ts"
+            ],
+            "files_to_update": [
+              "backend/src/jobs/jobs.module.ts",
+              "backend/src/app.module.ts"
+            ],
+            "acceptance_criteria": [
+              "All CRUD endpoints (GET, POST, PUT, DELETE) implemented with proper HTTP methods",
+              "Advanced filtering by status, category, cron pattern, and date ranges",
+              "Pagination with configurable page size and sorting options",
+              "Comprehensive input validation with detailed error messages",
+              "Integration with JobSchedulerService for automatic job registration",
+              "Proper error handling with meaningful HTTP status codes",
+              "Complete API documentation with Swagger/OpenAPI"
+            ]
+          }
+        },
+        {
+          "task_id": "T-020",
+          "title": "Cron Pattern Validation Service",
+          "description": "Implement comprehensive cron pattern validation with next execution calculation and human-readable descriptions",
+          "status": "todo",
+          "effort_points": 3,
+          "dependencies": ["T-015"],
+          "instructions": {
+            "steps": [
+              "Install cron-parser library: npm install cron-parser @types/cron-parser",
+              "Create CronValidationService for pattern validation",
+              "Implement next execution time calculation",
+              "Add human-readable cron pattern descriptions",
+              "Create validation decorator for cron patterns",
+              "Add timezone support for cron calculations",
+              "Implement cron pattern suggestions for common schedules"
+            ],
+            "files_to_create": [
+              "backend/src/jobs/services/cron-validation.service.ts",
+              "backend/src/jobs/decorators/valid-cron.decorator.ts",
+              "backend/src/jobs/dto/cron-validation.dto.ts"
+            ],
+            "files_to_update": [
+              "backend/src/jobs/jobs.module.ts",
+              "backend/src/jobs/dto/create-job.dto.ts",
+              "backend/src/jobs/dto/update-job.dto.ts"
+            ],
+            "acceptance_criteria": [
+              "Comprehensive validation of cron expressions using cron-parser",
+              "Next execution time calculation with timezone support",
+              "Human-readable descriptions for cron patterns",
+              "Custom validation decorator for automatic pattern validation",
+              "Helpful error messages for invalid cron patterns",
+              "Support for common cron pattern suggestions",
+              "Integration with job creation and update endpoints"
+            ]
+          }
+        },
+        {
+          "task_id": "T-021",
+          "title": "Manual Job Trigger Functionality",
+          "description": "Implement manual job execution with immediate trigger and execution tracking",
+          "status": "todo",
+          "effort_points": 3,
+          "dependencies": ["T-015"],
+          "instructions": {
+            "steps": [
+              "Add manual trigger endpoint to CronJobsController",
+              "Implement immediate job execution bypassing schedule",
+              "Create execution context for manual triggers",
+              "Add proper validation to prevent concurrent executions",
+              "Implement real-time status updates for manual executions",
+              "Add execution result response with detailed information",
+              "Setup proper logging for manual trigger events"
+            ],
+            "files_to_create": [
+              "backend/src/jobs/dto/manual-trigger.dto.ts",
+              "backend/src/jobs/dto/trigger-response.dto.ts"
+            ],
+            "files_to_update": [
+              "backend/src/jobs/jobs.controller.ts",
+              "backend/src/jobs/jobs.service.ts",
+              "backend/src/jobs/services/job-executor.service.ts"
+            ],
+            "acceptance_criteria": [
+              "Manual trigger endpoint accessible via POST /jobs/:id/trigger",
+              "Immediate job execution without waiting for schedule",
+              "Prevention of multiple concurrent executions for same job",
+              "Detailed execution result with status, response time, and output",
+              "Proper error handling for failed manual executions",
+              "Execution tracking marked as 'manual' trigger type",
+              "Real-time status updates during execution"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "phase_id": "F003_PHASE_03",
+      "title": "Frontend Cron Jobs Management UI",
+      "description": "Build comprehensive frontend interface for cron job management with listing, forms, and advanced features",
+      "priority": "High", 
+      "status": "todo",
+      "estimated_duration": "5-6 days",
+      "context": {
+        "overview": "Create user-friendly frontend interface for complete cron job management functionality",
+        "key_deliverables": [
+          "Responsive job listing with search and filters",
+          "Comprehensive job creation and editing forms",
+          "Job details view with execution history",
+          "Manual trigger interface with real-time feedback",
+          "Job analytics and performance metrics"
+        ]
+      },
+      "dependencies": ["F003_PHASE_02"],
+      "tasks": [
+        {
+          "task_id": "T-018",
+          "title": "Cron Jobs Data Layer & API Integration",
+          "description": "Implement TanStack Query hooks and API integration for cron job management with optimistic updates",
+          "status": "todo",
+          "effort_points": 4,
+          "dependencies": ["T-021"],
+          "instructions": {
+            "steps": [
+              "Create comprehensive cron jobs API service functions",
+              "Implement TanStack Query hooks for all CRUD operations",
+              "Setup optimistic updates for immediate UI feedback",
+              "Create intelligent cache invalidation strategies",
+              "Add error handling and retry logic for network failures",
+              "Implement real-time updates for job status changes",
+              "Setup query key hierarchies for efficient cache management"
+            ],
+            "files_to_create": [
+              "frontend/src/api/jobs.api.ts",
+              "frontend/src/hooks/use-jobs.ts",
+              "frontend/src/hooks/use-job-trigger.ts",
+              "frontend/src/types/job.types.ts"
+            ],
+            "files_to_update": [
+              "frontend/src/lib/api.ts"
+            ],
+            "acceptance_criteria": [
+              "Complete API service functions for all job operations",
+              "TanStack Query hooks with proper TypeScript typing",
+              "Optimistic updates for create, update, and delete operations",
+              "Intelligent cache invalidation and synchronization",
+              "Comprehensive error handling with user-friendly messages",
+              "Real-time status updates using polling or WebSocket",
+              "Efficient cache management with hierarchical query keys"
+            ]
+          }
+        },
+        {
+          "task_id": "T-022",
+          "title": "Jobs List & Management Interface",
+          "description": "Create comprehensive job listing page with advanced search, filtering, and management capabilities",
+          "status": "todo",
+          "effort_points": 4,
+          "dependencies": ["T-018"],
+          "instructions": {
+            "steps": [
+              "Build responsive jobs list page with data table component",
+              "Implement real-time search with debouncing and highlighting",
+              "Create advanced multi-criteria filtering system",
+              "Add sortable columns with persistent sort preferences",
+              "Implement pagination with configurable page sizes",
+              "Create job status toggle with confirmation dialogs",
+              "Add bulk operations for multiple job management",
+              "Implement job quick actions (edit, delete, trigger, view)"
+            ],
+            "files_to_create": [
+              "frontend/src/pages/jobs/index.tsx",
+              "frontend/src/components/jobs/jobs-list.tsx",
+              "frontend/src/components/jobs/job-filters.tsx",
+              "frontend/src/components/jobs/job-table.tsx",
+              "frontend/src/components/jobs/job-quick-actions.tsx"
+            ],
+            "files_to_update": [
+              "frontend/src/components/layout/navigation.tsx"
+            ],
+            "acceptance_criteria": [
+              "Responsive job listing with all job information displayed",
+              "Real-time search across job names and descriptions",
+              "Advanced filtering by status, category, cron pattern, and dates",
+              "Sortable columns with persistent user preferences",
+              "Pagination with configurable page sizes and navigation",
+              "One-click job status toggle with confirmation",
+              "Bulk operations for multiple job management",
+              "Quick action buttons for common operations"
+            ]
+          }
+        },
+        {
+          "task_id": "T-019",
+          "title": "Job Form Components & Validation",
+          "description": "Build comprehensive job creation and editing forms with advanced validation and user experience features",
+          "status": "todo",
+          "effort_points": 8,
+          "dependencies": ["T-022"],
+          "instructions": {
+            "steps": [
+              "Create comprehensive job form with all required fields",
+              "Implement advanced cron pattern builder with visual preview",
+              "Add real-time form validation using Zod schemas",
+              "Create custom components for headers and authentication configuration",
+              "Implement JSON editor for request body with syntax highlighting",
+              "Add form auto-save functionality for better UX",
+              "Create form wizard for step-by-step job creation",
+              "Implement form field dependencies and conditional rendering",
+              "Add comprehensive error handling and validation feedback"
+            ],
+            "files_to_create": [
+              "frontend/src/components/jobs/job-form.tsx",
+              "frontend/src/components/jobs/job-modal.tsx",
+              "frontend/src/components/jobs/cron-pattern-builder.tsx",
+              "frontend/src/components/jobs/headers-editor.tsx",
+              "frontend/src/components/jobs/auth-config.tsx",
+              "frontend/src/components/jobs/json-editor.tsx",
+              "frontend/src/components/ui/form-wizard.tsx"
+            ],
+            "files_to_update": [
+              "frontend/src/pages/jobs/index.tsx",
+              "frontend/src/lib/validation.ts"
+            ],
+            "acceptance_criteria": [
+              "Comprehensive form with all job configuration fields",
+              "Visual cron pattern builder with next execution preview",
+              "Real-time validation with helpful error messages",
+              "Custom headers editor with key-value pair management",
+              "Authentication configuration for different auth types",
+              "JSON editor with syntax highlighting and validation",
+              "Auto-save functionality with draft recovery",
+              "Form wizard for guided job creation process",
+              "Conditional field rendering based on selections"
+            ]
+          }
+        },
+        {
+          "task_id": "T-023",
+          "title": "Job Details & Analytics View",
+          "description": "Create detailed job view with execution history, analytics, and management actions",
+          "status": "todo",
+          "effort_points": 4,
+          "dependencies": ["T-019"],
+          "instructions": {
+            "steps": [
+              "Build comprehensive job details page with all job information",
+              "Create execution history table with filtering and pagination",
+              "Implement job analytics with success rates and performance metrics",
+              "Add execution timeline visualization",
+              "Create manual trigger interface with real-time feedback",
+              "Implement job configuration export/import functionality",
+              "Add job comparison feature for configuration changes",
+              "Create execution result viewer with request/response details"
+            ],
+            "files_to_create": [
+              "frontend/src/pages/jobs/[id].tsx",
+              "frontend/src/components/jobs/job-details.tsx",
+              "frontend/src/components/jobs/execution-history.tsx",
+              "frontend/src/components/jobs/job-analytics.tsx",
+              "frontend/src/components/jobs/execution-timeline.tsx",
+              "frontend/src/components/jobs/manual-trigger.tsx",
+              "frontend/src/components/jobs/execution-viewer.tsx"
+            ],
+            "files_to_update": [
+              "frontend/src/components/jobs/jobs-list.tsx"
+            ],
+            "acceptance_criteria": [
+              "Complete job details view with all configuration information",
+              "Execution history with filtering, sorting, and pagination",
+              "Job analytics showing success rates and performance trends",
+              "Visual execution timeline with status indicators",
+              "Manual trigger with real-time execution status updates",
+              "Job configuration export/import for backup and sharing",
+              "Job comparison feature for tracking configuration changes",
+              "Detailed execution result viewer with full request/response data"
+            ]
+          }
+        }
+      ]
+    }
+  ],
+  "technical_requirements": {
+    "backend_specifications": {
+      "node_cron_integration": "Complete job scheduler with node-cron library",
+      "execution_engine": "Robust HTTP client with retry logic and error handling",
+      "database_optimization": "Proper indexing for job queries and execution history",
+      "api_documentation": "Complete OpenAPI/Swagger documentation",
+      "error_handling": "Comprehensive error handling with proper HTTP status codes",
+      "logging": "Detailed logging for job scheduling and execution events"
+    },
+    "frontend_specifications": {
+      "responsive_design": "Mobile-first responsive design with TailwindCSS",
+      "real_time_updates": "Live job status updates using TanStack Query",
+      "form_validation": "Real-time validation with Zod schemas",
+      "user_experience": "Optimistic updates and loading states",
+      "accessibility": "WCAG 2.1 compliance for form components",
+      "performance": "Efficient data fetching and cache management"
+    },
+    "integration_requirements": {
+      "authentication": "JWT-based authentication for all job operations",
+      "authorization": "Role-based access control for job management",
+      "data_validation": "Client and server-side validation for all inputs",
+      "error_recovery": "Graceful error handling and user feedback",
+      "testing": "Unit and integration tests for critical functionality",
+      "monitoring": "Execution monitoring and performance tracking"
+    }
+  },
+  "success_criteria": {
+    "functional_requirements": [
+      "Complete CRUD operations for cron jobs working correctly",
+      "Job scheduling and execution functioning reliably",
+      "Manual job triggering with immediate execution",
+      "Advanced search and filtering capabilities",
+      "Real-time job status updates and monitoring",
+      "Comprehensive execution history tracking",
+      "Cron pattern validation with next execution preview",
+      "Job analytics and performance metrics"
+    ],
+    "non_functional_requirements": [
+      "Job execution latency under 5 seconds",
+      "API response times under 500ms",
+      "Form validation with sub-second feedback",
+      "Mobile-responsive interface across all devices",
+      "80%+ test coverage for critical functionality",
+      "Comprehensive error handling and user feedback",
+      "Scalable architecture supporting 100+ concurrent jobs",
+      "Complete API documentation and user guides"
+    ]
+  },
+  "testing_strategy": {
+    "backend_testing": [
+      "Unit tests for all service methods and business logic",
+      "Integration tests for API endpoints and database operations",
+      "Job execution testing with mock HTTP endpoints",
+      "Cron scheduling tests with time manipulation",
+      "Error handling tests for various failure scenarios",
+      "Performance tests for concurrent job execution",
+      "Security tests for authentication and authorization"
+    ],
+    "frontend_testing": [
+      "Component testing with React Testing Library",
+      "Form validation testing with various input scenarios",
+      "User interaction testing for job management workflows",
+      "API integration testing with Mock Service Worker",
+      "Responsive design testing across device sizes",
+      "Accessibility testing with automated tools",
+      "End-to-end testing with Playwright for critical user journeys"
+    ]
+  },
+  "deployment_considerations": {
+    "development_setup": [
+      "Docker compose with MySQL and Redis services",
+      "Hot reload for both frontend and backend development",
+      "Comprehensive development documentation",
+      "Sample job data for testing and development"
+    ],
+    "production_requirements": [
+      "Scalable job execution with proper resource management",
+      "Database optimization for large execution history",
+      "Monitoring and alerting for job failures",
+      "Backup and recovery procedures for job data",
+      "Security hardening for production deployment",
+      "Performance monitoring and optimization"
+    ]
+  }
+}
