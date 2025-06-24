@@ -11,11 +11,12 @@ export class CategoriesService {
   constructor(
     @InjectRepository(Category)
     private categoryRepository: Repository<Category>,
-  ) { }
+  ) {}
 
   async create(createCategoryDto: CreateCategoryDto, userId: number) {
     const category = this.categoryRepository.create({
       ...createCategoryDto,
+      userId,
     });
     return await this.categoryRepository.save(category);
   }
@@ -41,7 +42,9 @@ export class CategoriesService {
     }
 
     if (isActive !== undefined) {
-      queryBuilder.andWhere('category.isActive = :isActive', { isActive: isActive ? 1 : 0 });
+      queryBuilder.andWhere('category.isActive = :isActive', {
+        isActive: isActive ? 1 : 0,
+      });
     }
 
     const categoriesWithCount = await queryBuilder.getRawAndEntities();
@@ -58,7 +61,9 @@ export class CategoriesService {
     }
 
     if (isActive !== undefined) {
-      totalQuery.andWhere('category.isActive = :isActive', { isActive: isActive ? 1 : 0 });
+      totalQuery.andWhere('category.isActive = :isActive', {
+        isActive: isActive ? 1 : 0,
+      });
     }
 
     const total = await totalQuery.getCount();
@@ -100,10 +105,7 @@ export class CategoriesService {
     userId: number,
   ) {
     await this.findOne(id, userId); // Ensure exists and belongs to user
-    await this.categoryRepository.update(
-      { id, userId },
-      updateCategoryDto,
-    );
+    await this.categoryRepository.update({ id, userId }, updateCategoryDto);
     return this.findOne(id, userId);
   }
 
@@ -111,6 +113,18 @@ export class CategoriesService {
     await this.findOne(id, userId);
     await this.categoryRepository.delete(id);
     return { message: 'Category deleted successfully' };
+  }
+
+  async toggle(id: number, userId: number) {
+    const category = await this.findOne(id, userId); // Ensure exists and belongs to user
+
+    // Toggle the isActive status
+    const updatedCategory = await this.categoryRepository.save({
+      ...category,
+      isActive: !category.isActive,
+    });
+
+    return updatedCategory;
   }
 
   async getAnalytics(userId: number) {

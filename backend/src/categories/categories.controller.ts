@@ -21,7 +21,7 @@ import { CategoryFilterDto } from './dto/category-filter.dto';
 @Controller('api/categories')
 @UseGuards(JwtAuthGuard)
 export class CategoriesController {
-  constructor(private readonly categoriesService: CategoriesService) { }
+  constructor(private readonly categoriesService: CategoriesService) {}
 
   @Post()
   @HttpCode(HttpStatus.CREATED)
@@ -64,5 +64,11 @@ export class CategoriesController {
   @HttpCode(HttpStatus.NO_CONTENT)
   remove(@Param('id') id: string, @CurrentUser('id') userId: number) {
     return this.categoriesService.remove(+id, userId);
+  }
+
+  @Patch(':id/toggle')
+  @HttpCode(HttpStatus.OK)
+  toggle(@Param('id') id: string, @CurrentUser('id') userId: number) {
+    return this.categoriesService.toggle(+id, userId);
   }
 }

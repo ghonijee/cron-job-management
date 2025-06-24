@@ -50,7 +50,7 @@ export interface Category {
   description?: string
   color: string
   isActive: boolean
-  userId: string
+  userId: string | number  // Optional - can be extracted from JWT token by backend
   cronJobsCount?: number
   createdAt: string
   updatedAt: string
@@ -60,6 +60,7 @@ export interface CreateCategoryDto {
   name: string
   description?: string
   color: string
+  userId?: string | number  // Optional - can be extracted from JWT token by backend
 }
 
 export interface UpdateCategoryDto extends Partial<CreateCategoryDto> {

@@ -2,6 +2,7 @@ import { useState } from "react";
 import { DataTable } from "../ui/data-table";
 import { SearchInput } from "../ui/search-input";
 import { CategoryFilters } from "./category-filters";
+import { CategoryModal } from "./category-modal";
 import { useCategories, useToggleCategory } from "../../hooks/use-categories";
 import type { Category, CategoryFilter } from "../../types";
 
@@ -12,6 +13,9 @@ export function CategoryList() {
     sortBy: "name",
     sortOrder: "asc",
   });
+
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [editingCategory, setEditingCategory] = useState<Category | undefined>();
 
   const { data: categoriesData, isLoading, error } = useCategories(filters);
   const toggleCategory = useToggleCategory();
@@ -59,6 +63,24 @@ export function CategoryList() {
       sortBy: "name",
       sortOrder: "asc",
     });
+  };
+
+  const handleCreateCategory = () => {
+    setEditingCategory(undefined);
+    setIsModalOpen(true);
+  };
+
+  const handleEditCategory = (category: Category) => {
+    setEditingCategory(category);
+    setIsModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    setEditingCategory(undefined);
+    // Clear auto-save draft on modal close
+    const draftKey = editingCategory ? `category-draft-${editingCategory.id}` : 'category-draft-new';
+    localStorage.removeItem(draftKey);
   };
 
   const columns = [
@@ -121,6 +143,21 @@ export function CategoryList() {
       sortable: true,
       className: "text-gray-600",
     },
+    {
+      key: "actions",
+      header: "Actions",
+      accessor: (category: Category) => (
+        <div className="flex space-x-2">
+          <button
+            onClick={() => handleEditCategory(category)}
+            className="text-blue-600 hover:text-blue-800 font-medium text-sm"
+          >
+            Edit
+          </button>
+        </div>
+      ),
+      className: "text-right",
+    },
   ];
 
   if (error) {
@@ -145,7 +182,10 @@ export function CategoryList() {
           <h1 className="text-2xl font-bold text-gray-900">Categories</h1>
           <p className="text-gray-600 mt-1">Manage your job categories</p>
         </div>
-        <button className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium transition-colors">
+        <button 
+          onClick={handleCreateCategory}
+          className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium transition-colors"
+        >
           Add Category
         </button>
       </div>
@@ -225,6 +265,13 @@ export function CategoryList() {
           </div>
         </div>
       )}
+
+      {/* Modal */}
+      <CategoryModal
+        isOpen={isModalOpen}
+        onClose={handleCloseModal}
+        category={editingCategory}
+      />
     </div>
   );
 }

@@ -1,9 +1,11 @@
+import { Transform } from 'class-transformer';
 import {
   IsString,
   IsOptional,
   IsHexColor,
   MaxLength,
   MinLength,
+  IsBoolean,
 } from 'class-validator';
 
 export class CreateCategoryDto {
@@ -20,4 +22,9 @@ export class CreateCategoryDto {
   @IsOptional()
   @IsHexColor()
   color?: string;
+
+  @IsOptional()
+  @IsBoolean()
+  @Transform(({ value }) => value === 'true')
+  isActive?: boolean;
 }

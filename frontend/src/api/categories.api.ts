@@ -24,7 +24,7 @@ export const categoriesApi = {
   },
 
   update: async (id: string, data: UpdateCategoryDto): Promise<Category> => {
-    const response = await apiClient.put<Category>(`/categories/${id}`, data);
+    const response = await apiClient.patch<Category>(`/categories/${id}`, data);
     return response.data;
   },
 
