@@ -5,12 +5,16 @@ export interface ApiResponse<T> {
   statusCode: number
 }
 
-export interface PaginatedResponse<T> {
-  data: T[]
+export interface MetaPaginatedResponse {
   total: number
   page: number
   limit: number
   totalPages: number
+}
+
+export interface PaginatedResponse<T> {
+  data: T[]
+  pagination: MetaPaginatedResponse
 }
 
 export interface ApiError {

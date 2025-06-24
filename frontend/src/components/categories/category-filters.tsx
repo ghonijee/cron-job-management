@@ -1,4 +1,4 @@
-import type { CategoryFilter } from '../../types';
+import type { CategoryFilter } from "../../types";
 
 interface CategoryFiltersProps {
   filters: CategoryFilter;
@@ -6,19 +6,26 @@ interface CategoryFiltersProps {
   onReset: () => void;
 }
 
-export function CategoryFilters({ filters, onFiltersChange, onReset }: CategoryFiltersProps) {
+export function CategoryFilters({
+  filters,
+  onFiltersChange,
+  onReset,
+}: CategoryFiltersProps) {
   const handleFilterChange = (key: keyof CategoryFilter, value: unknown) => {
     onFiltersChange({
       ...filters,
       [key]: value,
-      page: 1 // Reset to first page when filtering
+      page: 1, // Reset to first page when filtering
     });
   };
 
-  const hasActiveFilters = filters.isActive !== undefined || filters.sortBy !== 'name' || filters.sortOrder !== 'asc';
+  const hasActiveFilters =
+    filters.isActive !== undefined ||
+    filters.sortBy !== "name" ||
+    filters.sortOrder !== "asc";
 
   return (
-    <div className="bg-white p-4 rounded-lg border space-y-4">
+    <div className="bg-white p-4 rounded-lg space-y-4">
       <div className="flex items-center justify-between">
         <h3 className="text-lg font-medium text-gray-900">Filters</h3>
         {hasActiveFilters && (
@@ -38,10 +45,19 @@ export function CategoryFilters({ filters, onFiltersChange, onReset }: CategoryF
             Status
           </label>
           <select
-            value={filters.isActive === undefined ? 'all' : filters.isActive ? 'active' : 'inactive'}
+            value={
+              filters.isActive === undefined
+                ? "all"
+                : filters.isActive
+                  ? "active"
+                  : "inactive"
+            }
             onChange={(e) => {
               const value = e.target.value;
-              handleFilterChange('isActive', value === 'all' ? undefined : value === 'active');
+              handleFilterChange(
+                "isActive",
+                value === "all" ? undefined : value === "active"
+              );
             }}
             className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
           >
@@ -57,8 +73,8 @@ export function CategoryFilters({ filters, onFiltersChange, onReset }: CategoryF
             Sort By
           </label>
           <select
-            value={filters.sortBy || 'name'}
-            onChange={(e) => handleFilterChange('sortBy', e.target.value)}
+            value={filters.sortBy || "name"}
+            onChange={(e) => handleFilterChange("sortBy", e.target.value)}
             className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
           >
             <option value="name">Name</option>
@@ -73,8 +89,8 @@ export function CategoryFilters({ filters, onFiltersChange, onReset }: CategoryF
             Sort Order
           </label>
           <select
-            value={filters.sortOrder || 'asc'}
-            onChange={(e) => handleFilterChange('sortOrder', e.target.value)}
+            value={filters.sortOrder || "asc"}
+            onChange={(e) => handleFilterChange("sortOrder", e.target.value)}
             className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
           >
             <option value="asc">Ascending</option>
@@ -89,7 +105,9 @@ export function CategoryFilters({ filters, onFiltersChange, onReset }: CategoryF
           </label>
           <select
             value={filters.limit || 10}
-            onChange={(e) => handleFilterChange('limit', parseInt(e.target.value))}
+            onChange={(e) =>
+              handleFilterChange("limit", parseInt(e.target.value))
+            }
             className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
           >
             <option value={5}>5</option>

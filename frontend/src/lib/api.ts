@@ -43,10 +43,10 @@ apiClient.interceptors.response.use(
         if (refreshToken) {
           const authApi = await getAuthApi()
           const authResponse = await authApi.refreshToken({ refreshToken })
-          
+
           tokenStorage.setAccessToken(authResponse.accessToken)
           tokenStorage.setRefreshToken(authResponse.refreshToken)
-          
+
           // Retry original request with new token
           originalRequest.headers.Authorization = `Bearer ${authResponse.accessToken}`
           return apiClient(originalRequest)

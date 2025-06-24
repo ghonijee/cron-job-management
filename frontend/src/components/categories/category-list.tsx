@@ -1,8 +1,10 @@
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { DataTable } from "../ui/data-table";
 import { SearchInput } from "../ui/search-input";
 import { CategoryFilters } from "./category-filters";
 import { CategoryModal } from "./category-modal";
+import { Pagination } from "../ui/pagination";
+import { CategoryListSkeleton } from "../ui/skeleton";
 import { useCategories, useToggleCategory } from "../../hooks/use-categories";
 import type { Category, CategoryFilter } from "../../types";
 
@@ -15,30 +17,33 @@ export function CategoryList() {
   });
 
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [editingCategory, setEditingCategory] = useState<Category | undefined>();
+  const [editingCategory, setEditingCategory] = useState<
+    Category | undefined
+  >();
 
   const { data: categoriesData, isLoading, error } = useCategories(filters);
   const toggleCategory = useToggleCategory();
 
-  const handleSearch = (search: string) => {
+  // Memoized handlers to prevent unnecessary re-renders
+  const handleSearch = useCallback((search: string) => {
     setFilters((prev) => ({
       ...prev,
       search: search || undefined,
-      page: 1,
+      page: 1, // Reset to page 1 when searching
     }));
-  };
+  }, []);
 
-  const handleSort = (key: string) => {
+  const handleSort = useCallback((key: string) => {
     setFilters((prev) => ({
       ...prev,
       sortBy: key as CategoryFilter["sortBy"],
       sortOrder:
         prev.sortBy === key && prev.sortOrder === "asc" ? "desc" : "asc",
-      page: 1,
+      page: 1, // Reset to page 1 when sorting
     }));
-  };
+  }, []);
 
-  const handleToggleStatus = async (category: Category) => {
+  const handleToggleStatus = useCallback(async (category: Category) => {
     if (
       window.confirm(
         `Are you sure you want to ${category.isActive ? "deactivate" : "activate"} this category?`
@@ -50,38 +55,52 @@ export function CategoryList() {
         console.error("Failed to toggle category status:", error);
       }
     }
-  };
+  }, [toggleCategory]);
 
-  const handlePageChange = (page: number) => {
-    setFilters((prev) => ({ ...prev, page }));
-  };
+  // Fixed pagination handler - no page reset
+  const handlePageChange = useCallback((page: number) => {
+    setFilters((prev) => ({ 
+      ...prev, 
+      page: Math.max(1, page) // Ensure page is at least 1
+    }));
+  }, []);
 
-  const resetFilters = () => {
+  const handleFiltersChange = useCallback((newFilters: Partial<CategoryFilter>) => {
+    setFilters((prev) => ({
+      ...prev,
+      ...newFilters,
+      page: 1, // Reset to page 1 when filters change
+    }));
+  }, []);
+
+  const resetFilters = useCallback(() => {
     setFilters({
       page: 1,
       limit: 10,
       sortBy: "name",
       sortOrder: "asc",
     });
-  };
+  }, []);
 
-  const handleCreateCategory = () => {
+  // Rest of the component handlers...
+  const handleCreateCategory = useCallback(() => {
     setEditingCategory(undefined);
     setIsModalOpen(true);
-  };
+  }, []);
 
-  const handleEditCategory = (category: Category) => {
+  const handleEditCategory = useCallback((category: Category) => {
     setEditingCategory(category);
     setIsModalOpen(true);
-  };
+  }, []);
 
-  const handleCloseModal = () => {
+  const handleCloseModal = useCallback(() => {
     setIsModalOpen(false);
     setEditingCategory(undefined);
-    // Clear auto-save draft on modal close
-    const draftKey = editingCategory ? `category-draft-${editingCategory.id}` : 'category-draft-new';
+    const draftKey = editingCategory
+      ? `category-draft-${editingCategory.id}`
+      : "category-draft-new";
     localStorage.removeItem(draftKey);
-  };
+  }, [editingCategory]);
 
   const columns = [
     {
@@ -160,110 +179,124 @@ export function CategoryList() {
     },
   ];
 
+  // Show skeleton loader while loading
+  if (isLoading && !categoriesData) {
+    return <CategoryListSkeleton />;
+  }
+
+  // Error state
   if (error) {
     return (
-      <div className="text-center py-12">
-        <div className="text-red-600 mb-2">Failed to load categories</div>
+      <div className="text-center py-12 bg-white rounded-lg border border-gray-200">
+        <div className="text-red-600 mb-4">
+          <svg className="w-12 h-12 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.732-.833-2.464 0L3.34 16.5c-.77.833.192 2.5 1.732 2.5z" />
+          </svg>
+          <p className="text-lg font-medium">Failed to load categories</p>
+          <p className="text-sm text-gray-500 mt-1">Please try again later</p>
+        </div>
         <button
           onClick={() => window.location.reload()}
-          className="text-blue-600 hover:text-blue-800 font-medium"
+          className="inline-flex items-center px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors"
         >
-          Try again
+          <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+          </svg>
+          Try Again
         </button>
       </div>
     );
   }
 
   return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900">Categories</h1>
-          <p className="text-gray-600 mt-1">Manage your job categories</p>
+    <div className="space-y-8">
+      {/* Enhanced Header */}
+      <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl p-6 border border-blue-200">
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-3xl font-bold text-gray-900 mb-2">Categories</h1>
+            <p className="text-gray-600">
+              Organize your cron jobs with custom categories
+            </p>
+            {categoriesData && (
+              <div className="flex items-center mt-3 space-x-6 text-sm text-gray-600">
+                <span className="flex items-center">
+                  <div className="w-2 h-2 bg-green-500 rounded-full mr-2"></div>
+                  {categoriesData.data.filter(cat => cat.isActive).length} Active
+                </span>
+                <span className="flex items-center">
+                  <div className="w-2 h-2 bg-gray-400 rounded-full mr-2"></div>
+                  {categoriesData.data.filter(cat => !cat.isActive).length} Inactive
+                </span>
+                <span className="flex items-center">
+                  <div className="w-2 h-2 bg-blue-500 rounded-full mr-2"></div>
+                  {categoriesData.pagination.total} Total
+                </span>
+              </div>
+            )}
+          </div>
+          <button
+            onClick={handleCreateCategory}
+            className="inline-flex items-center px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg shadow-sm transition-all duration-200 hover:shadow-md transform hover:scale-105"
+          >
+            <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+            </svg>
+            Add Category
+          </button>
         </div>
-        <button 
-          onClick={handleCreateCategory}
-          className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium transition-colors"
-        >
-          Add Category
-        </button>
       </div>
 
-      {/* Search */}
-      <SearchInput
-        placeholder="Search categories..."
-        onSearch={handleSearch}
-        className="max-w-md"
-      />
-
-      {/* Filters */}
-      <CategoryFilters
-        filters={filters}
-        onFiltersChange={setFilters}
-        onReset={resetFilters}
-      />
-
-      {/* Table */}
-      <DataTable
-        data={categoriesData?.data || []}
-        columns={columns}
-        loading={isLoading}
-        sortBy={filters.sortBy}
-        sortOrder={filters.sortOrder}
-        onSort={handleSort}
-        emptyMessage="No categories found"
-      />
-
-      {/* Pagination */}
-      {categoriesData && categoriesData.totalPages > 1 && (
-        <div className="flex items-center justify-between px-6 py-3 bg-white border rounded-lg">
-          <div className="text-sm text-gray-700">
-            Showing {((filters.page || 1) - 1) * (filters.limit || 10) + 1} to{" "}
-            {Math.min(
-              (filters.page || 1) * (filters.limit || 10),
-              categoriesData.total
-            )}{" "}
-            of {categoriesData.total} results
-          </div>
-          <div className="flex space-x-2">
-            <button
-              onClick={() => handlePageChange((filters.page || 1) - 1)}
-              disabled={!filters.page || filters.page <= 1}
-              className="px-3 py-1 text-sm border rounded hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              Previous
-            </button>
-            {Array.from(
-              { length: Math.min(5, categoriesData.totalPages) },
-              (_, i) => {
-                const pageNum = i + 1;
-                return (
-                  <button
-                    key={pageNum}
-                    onClick={() => handlePageChange(pageNum)}
-                    className={`px-3 py-1 text-sm border rounded ${
-                      (filters.page || 1) === pageNum
-                        ? "bg-blue-600 text-white border-blue-600"
-                        : "hover:bg-gray-50"
-                    }`}
-                  >
-                    {pageNum}
-                  </button>
-                );
-              }
-            )}
-            <button
-              onClick={() => handlePageChange((filters.page || 1) + 1)}
-              disabled={
-                !filters.page || filters.page >= categoriesData.totalPages
-              }
-              className="px-3 py-1 text-sm border rounded hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              Next
-            </button>
-          </div>
+      {/* Search and Filters */}
+      <div className="bg-white rounded-lg border border-gray-200 p-6 shadow-sm">
+        <div className="space-y-4">
+          <SearchInput
+            placeholder="Search categories..."
+            onSearch={handleSearch}
+            className="max-w-md"
+          />
+          
+          <CategoryFilters
+            filters={filters}
+            onFiltersChange={handleFiltersChange}
+            onReset={resetFilters}
+          />
         </div>
+      </div>
+
+      {/* Table with loading overlay */}
+      <div className="relative">
+        {isLoading && (
+          <div className="absolute inset-0 bg-white bg-opacity-75 flex items-center justify-center z-10 rounded-lg">
+            <div className="flex items-center space-x-2">
+              <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-600"></div>
+              <span className="text-sm text-gray-600">Loading...</span>
+            </div>
+          </div>
+        )}
+        
+        <DataTable
+          data={categoriesData?.data || []}
+          columns={columns}
+          loading={isLoading}
+          sortBy={filters.sortBy}
+          sortOrder={filters.sortOrder}
+          onSort={handleSort}
+          emptyMessage="No categories found"
+          className="shadow-sm"
+        />
+      </div>
+
+      {/* Enhanced Pagination */}
+      {categoriesData && categoriesData.pagination.totalPages > 1 && (
+        <Pagination
+          currentPage={filters.page || 1}
+          totalPages={categoriesData.pagination.totalPages}
+          totalItems={categoriesData.pagination.total}
+          itemsPerPage={filters.limit || 10}
+          onPageChange={handlePageChange}
+          isLoading={isLoading}
+        />
       )}
 
       {/* Modal */}
