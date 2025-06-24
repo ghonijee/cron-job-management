@@ -41,7 +41,7 @@ export class CategoriesService {
     }
 
     if (isActive !== undefined) {
-      queryBuilder.andWhere('category.isActive = :isActive', { isActive });
+      queryBuilder.andWhere('category.isActive = :isActive', { isActive: isActive ? 1 : 0 });
     }
 
     const categoriesWithCount = await queryBuilder.getRawAndEntities();
@@ -49,7 +49,7 @@ export class CategoriesService {
     // Get total count for pagination
     const totalQuery = this.categoryRepository
       .createQueryBuilder('category')
-      .where('category.user.id = :userId', { userId });
+      .where('category.userId = :userId', { userId });
 
     if (search) {
       totalQuery.andWhere('category.name LIKE :search', {
@@ -58,7 +58,7 @@ export class CategoriesService {
     }
 
     if (isActive !== undefined) {
-      totalQuery.andWhere('category.isActive = :isActive', { isActive });
+      totalQuery.andWhere('category.isActive = :isActive', { isActive: isActive ? 1 : 0 });
     }
 
     const total = await totalQuery.getCount();

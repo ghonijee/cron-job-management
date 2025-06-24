@@ -51,7 +51,7 @@ export interface Category {
   color: string
   isActive: boolean
   userId: string
-  jobCount?: number
+  cronJobsCount?: number
   createdAt: string
   updatedAt: string
 }

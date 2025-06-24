@@ -5,6 +5,7 @@ import { queryClient } from './lib/query-client';
 import { ProtectedRoute } from './components/auth/protected-route';
 import { AuthenticatedLayout } from './components/layout/authenticated-layout';
 import { LoginPage } from './pages/login';
+import { CategoriesPage } from './pages/categories';
 
 function App() {
   return (
@@ -33,7 +34,7 @@ function App() {
             >
               <Route index element={<Navigate to="/dashboard" replace />} />
               <Route path="dashboard" element={<DashboardPage />} />
-              <Route path="categories" element={<div>Categories</div>} />
+              <Route path="categories" element={<CategoriesPage />} />
               <Route path="jobs" element={<div>Jobs</div>} />
               <Route path="history" element={<div>History</div>} />
             </Route>

@@ -18,10 +18,10 @@ import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
 import { CategoryFilterDto } from './dto/category-filter.dto';
 
-@Controller('categories')
+@Controller('api/categories')
 @UseGuards(JwtAuthGuard)
 export class CategoriesController {
-  constructor(private readonly categoriesService: CategoriesService) {}
+  constructor(private readonly categoriesService: CategoriesService) { }
 
   @Post()
   @HttpCode(HttpStatus.CREATED)
@@ -37,6 +37,7 @@ export class CategoriesController {
     @Query() filterDto: CategoryFilterDto,
     @CurrentUser('id') userId: number,
   ) {
+    console.log(filterDto);
     return this.categoriesService.findAll(filterDto, userId);
   }
 
