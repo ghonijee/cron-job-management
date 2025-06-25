@@ -8,10 +8,7 @@ import { CategoriesModule } from './categories/categories.module';
 import { JwtAuthGuard } from './auth/guards/jwt-auth.guard';
 import databaseConfig from './config/database.config';
 import appConfig from './config/app.config';
-import { User } from './entities/user.entity';
-import { Category } from './entities/category.entity';
-import { CronJob } from './entities/cron-job.entity';
-import { ExecutionHistory } from './entities/execution-history.entity';
+import { User, Category, CronJob, ExecutionHistory } from './entities';
 
 @Module({
   imports: [
